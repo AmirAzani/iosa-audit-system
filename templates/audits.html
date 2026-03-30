@@ -1,0 +1,29 @@
+<h2>Audit Management</h2>
+
+<a href="/add_audit">Add New Audit</a>
+
+<table border="1">
+
+<tr>
+<th>ID</th>
+<th>Operator</th>
+<th>Audit Type</th>
+<th>Audit Date</th>
+<th>Auditor</th>
+<th>Status</th>
+</tr>
+
+{% for audit in audits %}
+
+<tr>
+<td>{{ audit.id }}</td>
+<td>{{ audit.operator.airline_name }}</td>
+<td>{{ audit.audit_type }}</td>
+<td>{{ audit.audit_date }}</td>
+<td>{{ audit.auditor_name }}</td>
+<td>{{ audit.status }}</td>
+</tr>
+
+{% endfor %}
+
+</table>

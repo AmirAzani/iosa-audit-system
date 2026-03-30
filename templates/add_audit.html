@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Audit</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 600px;
+            overflow: hidden;
+            animation: slideIn 0.5s ease;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header i {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+
+        .header h2 {
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            font-weight: 600;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .header p {
+            font-size: 1em;
+            opacity: 0.95;
+            font-weight: 300;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group label i {
+            color: #667eea;
+            margin-right: 8px;
+            width: 18px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-group input::placeholder {
+            color: #aaa;
+            font-weight: 300;
+        }
+
+        .form-group select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23667eea' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 16px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .input-hint {
+            font-size: 0.8em;
+            color: #6c757d;
+            margin-top: 5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .input-hint i {
+            color: #667eea;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 14px 25px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            text-align: center;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(108, 117, 125, 0.3);
+        }
+
+        .btn-secondary:active {
+            transform: translateY(0);
+        }
+
+        .required-field::after {
+            content: "*";
+            color: #dc3545;
+            margin-left: 4px;
+        }
+
+        .info-box {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.95em;
+            color: #495057;
+        }
+
+        .info-box i {
+            color: #667eea;
+            font-size: 1.2em;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #6c757d;
+            font-size: 0.85em;
+        }
+
+        .footer i {
+            color: #667eea;
+            margin: 0 5px;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .content {
+                padding: 30px 20px;
+            }
+
+            .header {
+                padding: 25px 20px;
+            }
+
+            .header h2 {
+                font-size: 1.8em;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+
+        /* Status badge preview */
+        .status-preview {
+            margin-top: 5px;
+            font-size: 0.85em;
+        }
+
+        .status-dot {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+
+        .dot-planned { background: #6c757d; }
+        .dot-progress { background: #ffc107; }
+        .dot-completed { background: #28a745; }
+    </style>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <i class="fas fa-clipboard-list"></i>
+            <h2>Add New Audit</h2>
+            <p>Create a new IOSA audit record</p>
+        </div>
+
+        <div class="content">
+            <!-- Info Box -->
+            <div class="info-box">
+                <i class="fas fa-info-circle"></i>
+                <span>All fields marked with <span style="color: #dc3545;">*</span> are required</span>
+            </div>
+
+            <form method="POST" action="/save_audit">
+                <!-- Operator Selection -->
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-building"></i> Operator <span style="color: #dc3545;">*</span>
+                    </label>
+                    <select name="operator_id" required>
+                        <option value="" disabled selected>-- Select an operator --</option>
+                        {% for operator in operators %}
+                        <option value="{{ operator.id }}">
+                            {{ operator.airline_name }} ({{ operator.iata_code }})
+                        </option>
+                        {% endfor %}
+                    </select>
+                    <div class="input-hint">
+                        <i class="fas fa-info-circle"></i>
+                        Select the airline being audited
+                    </div>
+                </div>
+
+                <!-- Audit Type -->
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-tag"></i> Audit Type <span style="color: #dc3545;">*</span>
+                    </label>
+                    <input type="text" 
+                           name="audit_type" 
+                           placeholder="e.g., IOSA, Safety, Security" 
+                           required>
+                    <div class="input-hint">
+                        <i class="fas fa-info-circle"></i>
+                        e.g., Full IOSA Audit, Surveillance Audit, etc.
+                    </div>
+                </div>
+
+               <!-- Date and Auditor Row -->
+<div class="form-row">
+    <div class="form-group">
+        <label>
+            <i class="fas fa-calendar-alt"></i> Audit Year <span style="color: #dc3545;">*</span>
+        </label>
+        <select name="audit_year" id="auditYear" required>
+            <!-- Options will be populated by JavaScript -->
+        </select>
+    </div>
+</div>
+
+<script>
+    // Populate year dropdown dynamically
+    const yearSelect = document.getElementById('auditYear');
+    const currentYear = new Date().getFullYear(); // 2026
+    
+    // Show years from current year + 2 down to 30 years back
+    for (let year = currentYear + 2; year >= currentYear - 28; year--) {
+        const option = document.createElement('option');
+        option.value = year;
+        option.textContent = year;
+        yearSelect.appendChild(option);
+    }
+</script>
+
+                    <div class="form-group">
+                        <label>
+                            <i class="fas fa-user-tie"></i> Auditor Name
+                        </label>
+                        <input type="text" 
+                               name="auditor_name" 
+                               placeholder="e.g., John Smith">
+                        <div class="input-hint">
+                            <i class="fas fa-info-circle"></i>
+                            Optional - leave blank if not assigned
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Status Selection -->
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-flag"></i> Status
+                    </label>
+                    <select name="status">
+                        <option value="Planned" selected>
+                            📅 Planned
+                        </option>
+                        <option value="In Progress">
+                            🔄 In Progress
+                        </option>
+                        <option value="Completed">
+                            ✅ Completed
+                        </option>
+                    </select>
+                    
+                    <!-- Status color preview -->
+                    <div class="status-preview">
+                        <span class="status-dot dot-planned"></span> Planned
+                        <span class="status-dot dot-progress" style="margin-left: 15px;"></span> In Progress
+                        <span class="status-dot dot-completed" style="margin-left: 15px;"></span> Completed
+                    </div>
+                </div>
+
+                <!-- Buttons -->
+                <div class="button-group">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Save Audit
+                    </button>
+                    <a href="/audits" class="btn btn-secondary">
+                        <i class="fas fa-times"></i> Cancel
+                    </a>
+                </div>
+            </form>
+
+            <!-- Footer -->
+            <div class="footer">
+                <i class="fas fa-plane"></i> IOSA Audit Management System <i class="fas fa-plane"></i>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

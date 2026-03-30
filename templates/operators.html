@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operator Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+            animation: slideIn 0.5s ease;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 600;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.95;
+            font-weight: 300;
+            margin-bottom: 15px;
+        }
+
+        /* Navigation Menu */
+        .nav-menu {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 15px;
+        }
+
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 0.95em;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-link i {
+            font-size: 1em;
+        }
+
+        .nav-link.active {
+            background: white;
+            color: #667eea;
+            border: 1px solid white;
+        }
+
+        .nav-link.active i {
+            color: #667eea;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        /* Add Operator Section */
+        .add-operator-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 40px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+
+        .section-title {
+            color: #333;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title h3 {
+            font-size: 1.5em;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .section-title i {
+            color: #667eea;
+            font-size: 1.5em;
+        }
+
+        .operator-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            align-items: end;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: #555;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group label i {
+            color: #667eea;
+            margin-right: 5px;
+        }
+
+        .form-group input {
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-group input::placeholder {
+            color: #aaa;
+            font-weight: 300;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 10px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            height: 45px;
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Operator List Section */
+        .operator-list-section {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+
+        .list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 25px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        .list-header h3 {
+            color: #495057;
+            font-size: 1.3em;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .list-header h3 i {
+            color: #667eea;
+        }
+
+        .operator-count {
+            background: #667eea;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+            padding: 15px 20px;
+            text-align: left;
+            font-size: 0.95em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        th i {
+            margin-right: 8px;
+            font-size: 1em;
+        }
+
+        td {
+            padding: 15px 20px;
+            border-bottom: 1px solid #e9ecef;
+            color: #495057;
+        }
+
+        tr {
+            transition: background-color 0.3s ease;
+        }
+
+        tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .alliance-badge {
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 500;
+            display: inline-block;
+        }
+
+        .iata-badge {
+            background: #e9ecef;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        /* Airline name link styling */
+        .airline-link {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: color 0.3s ease;
+        }
+
+        .airline-link:hover {
+            color: #764ba2;
+            text-decoration: underline;
+        }
+
+        .airline-link i {
+            color: #667eea;
+            font-size: 0.9em;
+        }
+
+        /* Action Buttons Styles */
+        .action-btn {
+            text-decoration: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-right: 5px;
+            display: inline-block;
+            transition: all 0.2s ease;
+        }
+
+        .edit-btn {
+            background: #ffc107;
+            color: #333;
+        }
+
+        .edit-btn:hover {
+            background: #e0a800;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(255, 193, 7, 0.3);
+        }
+
+        .delete-btn {
+            background: #dc3545;
+            color: white;
+        }
+
+        .delete-btn:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(220, 53, 69, 0.3);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6c757d;
+        }
+
+        .empty-state i {
+            font-size: 4em;
+            color: #dee2e6;
+            margin-bottom: 20px;
+        }
+
+        .empty-state p {
+            font-size: 1.1em;
+            margin-bottom: 10px;
+        }
+
+        .empty-state .hint {
+            font-size: 0.9em;
+            color: #adb5bd;
+        }
+
+        /* Animation */
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Success Message */
+        .success-message {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            color: #155724;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideIn 0.3s ease;
+        }
+
+        .success-message i {
+            color: #28a745;
+            font-size: 1.2em;
+        }
+
+        /* Error Message */
+        .error-message {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            color: #721c24;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideIn 0.3s ease;
+        }
+
+        .error-message i {
+            color: #dc3545;
+            font-size: 1.2em;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .content {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .nav-menu {
+                flex-direction: column;
+                gap: 10px;
+                align-items: center;
+            }
+
+            .nav-link {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .operator-form {
+                grid-template-columns: 1fr;
+            }
+
+            .submit-btn {
+                width: 100%;
+            }
+
+            th, td {
+                padding: 12px 15px;
+            }
+
+            .action-btn {
+                margin-bottom: 5px;
+                display: block;
+                text-align: center;
+                margin-right: 0;
+            }
+        }
+
+        /* Scrollbar Styling */
+        .table-container::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        .table-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .table-container::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
+        }
+
+        .table-container::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #5a67d8 0%, #6b46a0 100%);
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e9ecef;
+            color: #6c757d;
+            font-size: 0.9em;
+        }
+
+        .footer i {
+            color: #667eea;
+            margin: 0 5px;
+        }
+    </style>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-plane"></i> Operator Management</h1>
+            <p>Manage your airline operators efficiently and effectively</p>
+            
+            <!-- Navigation Menu -->
+            <div class="nav-menu">
+                <a href="/operators" class="nav-link active">
+                    <i class="fas fa-building"></i> Operators
+                </a>
+                <a href="/dashboard" class="nav-link">
+                    <i class="fas fa-chart-pie"></i> Dashboard
+                </a>
+            </div>
+        </div>
+
+        <div class="content">
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="{% if category == 'error' %}error-message{% else %}success-message{% endif %}">
+                            <i class="fas fa-{% if category == 'error' %}exclamation-circle{% else %}check-circle{% endif %}"></i>
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <!-- Add Operator Section -->
+            <div class="add-operator-section">
+                <div class="section-title">
+                    <i class="fas fa-plus-circle"></i>
+                    <h3>Add New Operator</h3>
+                </div>
+
+                <form method="POST" action="/add_operator" class="operator-form">
+                    <div class="form-group">
+                        <label for="airline_name">
+                            <i class="fas fa-building"></i> Airline Name
+                        </label>
+                        <input type="text" 
+                               id="airline_name" 
+                               name="airline_name" 
+                               placeholder="e.g., Malaysia Airlines" 
+                               required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="iata_code">
+                            <i class="fas fa-code"></i> IATA Code
+                        </label>
+                        <input type="text" 
+                               id="iata_code" 
+                               name="iata_code" 
+                               placeholder="e.g., MH" 
+                               maxlength="2" 
+                               required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="alliance">
+                            <i class="fas fa-handshake"></i> Alliance
+                        </label>
+                        <input type="text" 
+                               id="alliance" 
+                               name="alliance" 
+                               placeholder="e.g., Oneworld, Star Alliance">
+                    </div>
+
+                    <button type="submit" class="submit-btn">
+                        <i class="fas fa-plus"></i> Add Operator
+                    </button>
+                </form>
+            </div>
+
+            <!-- Operator List Section -->
+            <div class="operator-list-section">
+                <div class="list-header">
+                    <h3>
+                        <i class="fas fa-list"></i>
+                        Operator Directory
+                    </h3>
+                    <span class="operator-count">
+                        <i class="fas fa-users"></i> {{ operators|length }} Total
+                    </span>
+                </div>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th><i class="fas fa-hashtag"></i> ID</th>
+                                <th><i class="fas fa-building"></i> Airline Name</th>
+                                <th><i class="fas fa-code"></i> IATA Code</th>
+                                <th><i class="fas fa-handshake"></i> Alliance</th>
+                                <th><i class="fas fa-cogs"></i> Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if operators %}
+                                {% for operator in operators %}
+                                <tr>
+                                    <td><strong>#{{ operator.id }}</strong></td>
+                                    <td>
+                                        <a href="/operator/{{ operator.id }}" class="airline-link">
+                                            <i class="fas fa-plane"></i>
+                                            {{ operator.airline_name }}
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <span class="iata-badge">
+                                            {{ operator.iata_code }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        {% if operator.alliance %}
+                                            <span class="alliance-badge">
+                                                <i class="fas fa-star"></i>
+                                                {{ operator.alliance }}
+                                            </span>
+                                        {% else %}
+                                            <span style="color: #adb5bd; font-style: italic;">—</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a href="/edit_operator/{{ operator.id }}" class="action-btn edit-btn">
+                                            <i class="fas fa-edit"></i> Edit
+                                        </a>
+                                        <a href="/delete_operator/{{ operator.id }}"
+                                           class="action-btn delete-btn"
+                                           onclick="return confirm('Are you sure you want to delete {{ operator.airline_name }}? This action cannot be undone.');">
+                                            <i class="fas fa-trash"></i> Delete
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="5">
+                                        <div class="empty-state">
+                                            <i class="fas fa-plane-slash"></i>
+                                            <p>No operators found</p>
+                                            <p class="hint">Add your first operator using the form above</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="footer">
+                <i class="fas fa-plane"></i> IOSA Audit Management System <i class="fas fa-plane"></i>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

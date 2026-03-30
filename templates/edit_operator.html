@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Operator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .edit-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 500px;
+            overflow: hidden;
+            animation: slideIn 0.5s ease;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header i {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+
+        .header h2 {
+            font-size: 2em;
+            margin-bottom: 10px;
+            font-weight: 600;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .header p {
+            font-size: 1em;
+            opacity: 0.95;
+            font-weight: 300;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .info-box {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            font-size: 0.95em;
+            color: #666;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-box i {
+            color: #667eea;
+            font-size: 1.2em;
+        }
+
+        .info-box strong {
+            color: #495057;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group label i {
+            color: #667eea;
+            margin-right: 5px;
+            width: 18px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-group input::placeholder {
+            color: #aaa;
+            font-weight: 300;
+        }
+
+        .form-group input[readonly] {
+            background-color: #f8f9fa;
+            cursor: not-allowed;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            text-align: center;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(108, 117, 125, 0.3);
+        }
+
+        .btn-secondary:active {
+            transform: translateY(0);
+        }
+
+        .footer-note {
+            text-align: center;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #e9ecef;
+            color: #6c757d;
+            font-size: 0.85em;
+        }
+
+        .footer-note i {
+            color: #667eea;
+            margin: 0 3px;
+        }
+
+        /* Current values display */
+        .current-value {
+            background: #f8f9fa;
+            padding: 8px 12px;
+            border-radius: 8px;
+            margin-top: 5px;
+            font-size: 0.9em;
+            color: #6c757d;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px dashed #dee2e6;
+        }
+
+        .current-value i {
+            color: #667eea;
+        }
+
+        .current-value span {
+            color: #495057;
+            font-weight: 600;
+            margin-left: 5px;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .content {
+                padding: 30px 20px;
+            }
+
+            .header {
+                padding: 25px 20px;
+            }
+
+            .header h2 {
+                font-size: 1.8em;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+
+        /* Success/Error messages (if you use flash) */
+        .alert {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideIn 0.3s ease;
+        }
+
+        .alert i {
+            color: #dc3545;
+            font-size: 1.2em;
+        }
+
+        .success-message {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            color: #155724;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideIn 0.3s ease;
+        }
+
+        .success-message i {
+            color: #28a745;
+            font-size: 1.2em;
+        }
+
+        /* Input hint */
+        .input-hint {
+            font-size: 0.8em;
+            color: #6c757d;
+            margin-top: 5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .input-hint i {
+            color: #667eea;
+        }
+    </style>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="edit-container">
+        <div class="header">
+            <i class="fas fa-edit"></i>
+            <h2>Edit Operator</h2>
+            <p>Update operator information</p>
+        </div>
+
+        <div class="content">
+            <!-- Flash messages (optional) -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="{% if category == 'error' %}alert{% else %}success-message{% endif %}">
+                            <i class="fas fa-{% if category == 'error' %}exclamation-circle{% else %}check-circle{% endif %}"></i>
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <!-- Info box showing which operator is being edited -->
+            <div class="info-box">
+                <i class="fas fa-info-circle"></i>
+                <div>
+                    You are editing: <strong>{{ operator.airline_name }}</strong> 
+                    (<strong>{{ operator.iata_code }}</strong>)
+                </div>
+            </div>
+
+          <form method="POST" action="/update_operator/{{ operator.id }}">
+                <div class="form-group">
+                    <label for="airline_name">
+                        <i class="fas fa-building"></i> Airline Name
+                    </label>
+                    <input type="text" 
+                           id="airline_name" 
+                           name="airline_name" 
+                           value="{{ operator.airline_name }}"
+                           placeholder="Enter airline name" 
+                           required>
+                    <div class="input-hint">
+                        <i class="fas fa-info-circle"></i>
+                        Full legal name of the airline
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="iata_code">
+                        <i class="fas fa-code"></i> IATA Code
+                    </label>
+                    <input type="text" 
+                           id="iata_code" 
+                           name="iata_code" 
+                           value="{{ operator.iata_code }}"
+                           placeholder="e.g., MH" 
+                           maxlength="2" 
+                           required>
+                    <div class="input-hint">
+                        <i class="fas fa-info-circle"></i>
+                        2-letter IATA code (e.g., MH, AK, SQ)
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="alliance">
+                        <i class="fas fa-handshake"></i> Alliance
+                    </label>
+                    <input type="text" 
+                           id="alliance" 
+                           name="alliance" 
+                           value="{{ operator.alliance or '' }}"
+                           placeholder="e.g., Oneworld, Star Alliance, SkyTeam">
+                    <div class="input-hint">
+                        <i class="fas fa-info-circle"></i>
+                        Leave empty if not in an alliance
+                    </div>
+                </div>
+
+                <!-- Current values display (optional reference) -->
+                <div class="current-value">
+                    <i class="fas fa-history"></i>
+                    Current values: 
+                    <span>{{ operator.airline_name }}</span> | 
+                    <span>{{ operator.iata_code }}</span> | 
+                    <span>{{ operator.alliance or 'No alliance' }}</span>
+                </div>
+
+                <div class="button-group">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Update Operator
+                    </button>
+                    <a href="/operators" class="btn btn-secondary">
+                        <i class="fas fa-times"></i> Cancel
+                    </a>
+                </div>
+            </form>
+
+            <div class="footer-note">
+                <i class="fas fa-plane"></i>
+                IOSA Audit Management System
+                <i class="fas fa-plane" style="transform: rotateY(180deg);"></i>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

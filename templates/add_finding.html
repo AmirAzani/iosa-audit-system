@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Finding / Observation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 700px;
+            overflow: hidden;
+            animation: slideIn 0.5s ease;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header i {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+
+        .header h2 {
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            font-weight: 600;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .header p {
+            font-size: 1em;
+            opacity: 0.95;
+            font-weight: 300;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .info-box {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.95em;
+            color: #495057;
+        }
+
+        .info-box i {
+            color: #667eea;
+            font-size: 1.2em;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group label i {
+            color: #667eea;
+            margin-right: 8px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .input-hint {
+            font-size: 0.8em;
+            color: #6c757d;
+            margin-top: 5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .input-hint i {
+            color: #667eea;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 14px 25px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            text-align: center;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(108, 117, 125, 0.3);
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #6c757d;
+            font-size: 0.85em;
+        }
+
+        .footer i {
+            color: #667eea;
+            margin: 0 5px;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Type Badge Preview */
+        .type-preview {
+            margin-top: 5px;
+            font-size: 0.85em;
+        }
+
+        .type-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-right: 15px;
+        }
+
+        .badge-finding {
+            background: #dc3545;
+            color: white;
+        }
+
+        .badge-observation {
+            background: #ffc107;
+            color: #856404;
+        }
+
+        /* Status Preview */
+        .status-preview {
+            margin-top: 5px;
+        }
+
+        .status-dot {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+
+        .dot-open {
+            background: #dc3545;
+        }
+
+        .dot-closed {
+            background: #28a745;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                padding: 30px 20px;
+            }
+
+            .header h2 {
+                font-size: 1.8em;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <i class="fas fa-clipboard-check"></i>
+            <h2>Add Finding / Observation</h2>
+            <p>Document audit findings and observations for IOSA compliance</p>
+        </div>
+
+        <div class="content">
+            <!-- Info Box -->
+            <div class="info-box">
+                <i class="fas fa-info-circle"></i>
+                <span>Record details of the audit finding or observation below</span>
+            </div>
+
+            <form method="POST" action="/save_finding">
+                <input type="hidden" name="audit_id" value="{{ audit.id }}">
+
+                <!-- Type and Status Row -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>
+                            <i class="fas fa-tag"></i> Type
+                        </label>
+                        <select name="type">
+                            <option value="Finding">Finding</option>
+                            <option value="Observation">Observation</option>
+                        </select>
+                        <div class="type-preview">
+                            <span class="type-badge badge-finding">Finding</span>
+                            <span class="type-badge badge-observation">Observation</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            <i class="fas fa-flag"></i> Status
+                        </label>
+                        <select name="status">
+                            <option value="Open">Open</option>
+                            <option value="Closed">Closed</option>
+                        </select>
+                        <div class="status-preview">
+                            <span><span class="status-dot dot-open"></span> Open</span>
+                            <span style="margin-left: 15px;"><span class="status-dot dot-closed"></span> Closed</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ISARP Code -->
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-code"></i> ISARP Code
+                    </label>
+                    <input type="text" name="isarp_code" placeholder="e.g., ISARP 1.2.3">
+                    <div class="input-hint">
+                        <i class="fas fa-info-circle"></i>
+                        Enter the ISARP reference code
+                    </div>
+                </div>
+
+                <!-- ISARP Requirement -->
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-file-alt"></i> ISARP Requirement
+                    </label>
+                    <textarea name="isarp_requirement" placeholder="Describe the ISARP requirement..."></textarea>
+                </div>
+
+                <!-- Finding Details -->
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-exclamation-triangle"></i> Finding Details
+                    </label>
+                    <textarea name="finding_details" placeholder="Detailed description of the finding or observation..."></textarea>
+                </div>
+
+                <!-- Root Cause -->
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-search"></i> Root Cause
+                    </label>
+                    <input type="text" name="root_cause" placeholder="What caused this finding?">
+                    <div class="input-hint">
+                        <i class="fas fa-info-circle"></i>
+                        Identify the underlying cause
+                    </div>
+                </div>
+
+                <!-- Corrective Action -->
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-tools"></i> Corrective Action
+                    </label>
+                    <textarea name="corrective_action" placeholder="Actions taken to address the finding..."></textarea>
+                </div>
+
+                <!-- Final Review -->
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-check-circle"></i> Final Review
+                    </label>
+                    <textarea name="final_review" placeholder="Final review comments and verification..."></textarea>
+                </div>
+
+                <!-- Buttons -->
+                <div class="button-group">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Save Finding
+                    </button>
+                    <a href="/audit/{{ audit.id }}" class="btn btn-secondary">
+                        <i class="fas fa-times"></i> Cancel
+                    </a>
+                </div>
+            </form>
+
+            <!-- Footer -->
+            <div class="footer">
+                <i class="fas fa-plane"></i> IOSA Audit Management System <i class="fas fa-plane"></i>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

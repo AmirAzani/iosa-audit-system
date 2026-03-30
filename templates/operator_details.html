@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ operator.airline_name }} - IOSA Audits</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+            animation: slideIn 0.5s ease;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 600;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .header h1 i {
+            margin-right: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.95;
+            font-weight: 300;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        /* Operator Info Card */
+        .info-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            border: 1px solid rgba(102, 126, 234, 0.2);
+        }
+
+        .info-item {
+            flex: 1 1 200px;
+        }
+
+        .info-label {
+            font-size: 0.85em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #6c757d;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .info-label i {
+            color: #667eea;
+        }
+
+        .info-value {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #495057;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .iata-badge {
+            background: #e9ecef;
+            padding: 5px 15px;
+            border-radius: 30px;
+            font-size: 1em;
+        }
+
+        .alliance-badge-large {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 30px;
+            font-size: 0.9em;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .alliance-badge-large i {
+            color: #ffd700;
+        }
+
+        .operator-icon {
+            font-size: 2em;
+            color: #667eea;
+            background: rgba(102, 126, 234, 0.1);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Section Header */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title h3 {
+            font-size: 1.8em;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .section-title i {
+            color: #667eea;
+            font-size: 1.8em;
+        }
+
+        .add-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 10px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .add-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .add-btn i {
+            font-size: 1.1em;
+        }
+
+        /* Table Styles */
+        .table-container {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            border: 1px solid #e9ecef;
+            margin-bottom: 30px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+            padding: 15px 20px;
+            text-align: left;
+            font-size: 0.95em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        th i {
+            margin-right: 8px;
+        }
+
+        td {
+            padding: 15px 20px;
+            border-bottom: 1px solid #e9ecef;
+            color: #495057;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tbody tr {
+            transition: background-color 0.3s ease;
+        }
+
+        tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        /* Audit Type Badge */
+        .audit-type {
+            background: #e9ecef;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-weight: 600;
+            font-size: 0.9em;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .audit-type i {
+            color: #667eea;
+        }
+
+        /* Status Badges */
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 30px;
+            font-size: 0.85em;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .status-planned {
+            background: #e9ecef;
+            color: #495057;
+        }
+
+        .status-in-progress {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-completed {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-cancelled {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        /* View Findings Link */
+        .findings-link {
+            text-decoration: none;
+            color: #667eea;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: all 0.2s ease;
+        }
+
+        .findings-link:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .findings-link i {
+            font-size: 0.9em;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6c757d;
+        }
+
+        .empty-state i {
+            font-size: 4em;
+            color: #dee2e6;
+            margin-bottom: 20px;
+        }
+
+        .empty-state p {
+            font-size: 1.1em;
+            margin-bottom: 10px;
+        }
+
+        .empty-state .hint {
+            font-size: 0.9em;
+            color: #adb5bd;
+        }
+
+        /* Back Button */
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #6c757d;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 10px 20px;
+            border-radius: 10px;
+            background: #f8f9fa;
+            transition: all 0.3s ease;
+        }
+
+        .back-link:hover {
+            background: #e9ecef;
+            color: #495057;
+            transform: translateX(-5px);
+        }
+
+        .back-link i {
+            color: #667eea;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #6c757d;
+            font-size: 0.9em;
+        }
+
+        .footer i {
+            color: #667eea;
+            margin: 0 5px;
+        }
+
+        /* Animation */
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .content {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .info-card {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .add-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            th, td {
+                padding: 12px 15px;
+            }
+
+            table {
+                font-size: 0.9em;
+            }
+        }
+
+        /* Scrollbar Styling */
+        .table-container::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        .table-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .table-container::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
+        }
+
+        .table-container::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #5a67d8 0%, #6b46a0 100%);
+        }
+    </style>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>
+                <i class="fas fa-plane"></i> 
+                {{ operator.airline_name }}
+            </h1>
+            <p>IOSA Audit History and Findings</p>
+        </div>
+
+        <div class="content">
+            <!-- Operator Information Card -->
+            <div class="info-card">
+                <div class="operator-icon">
+                    <i class="fas fa-fw fa-building"></i>
+                </div>
+                
+                <div class="info-item">
+                    <div class="info-label">
+                        <i class="fas fa-tag"></i> IATA Code
+                    </div>
+                    <div class="info-value">
+                        <span class="iata-badge">{{ operator.iata_code }}</span>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-label">
+                        <i class="fas fa-handshake"></i> Alliance
+                    </div>
+                    <div class="info-value">
+                        {% if operator.alliance %}
+                            <span class="alliance-badge-large">
+                                <i class="fas fa-star"></i>
+                                {{ operator.alliance }}
+                            </span>
+                        {% else %}
+                            <span style="color: #adb5bd; font-style: italic;">
+                                <i class="fas fa-minus-circle"></i> Not specified
+                            </span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-label">
+                        <i class="fas fa-clipboard-list"></i> Total Audits
+                    </div>
+                    <div class="info-value">
+                        <span style="background: #667eea; color: white; padding: 5px 15px; border-radius: 30px;">
+                            {{ audits|length }} Audit{% if audits|length != 1 %}s{% endif %}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- IOSA Audit Years Section -->
+            <div class="section-header">
+                <div class="section-title">
+                    <i class="fas fa-calendar-alt"></i>
+                    <h3>IOSA Audit Years</h3>
+                </div>
+                
+                <a href="/add_audit?operator_id={{ operator.id }}" class="add-btn">
+                    <i class="fas fa-plus-circle"></i> Add Audit Year
+                </a>
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th><i class="fas fa-tag"></i> Audit Type</th>
+                            <th><i class="fas fa-calendar"></i> Audit Year</th>
+                            <th><i class="fas fa-user"></i> Auditor</th>
+                            <th><i class="fas fa-flag"></i> Status</th>
+                            <th><i class="fas fa-eye"></i> Findings</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if audits %}
+                            {% for audit in audits %}
+                            <tr>
+                                <td>
+                                    <span class="audit-type">
+                                        <i class="fas fa-{% if audit.audit_type == 'IOSA' %}certificate{% else %}clipboard-check{% endif %}"></i>
+                                        {{ audit.audit_type }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <i class="fas fa-calendar-day" style="color: #667eea; margin-right: 5px;"></i>
+                                    {{ audit.audit_year }}
+                                </td>
+                                <td>
+                                    <i class="fas fa-user-tie" style="color: #667eea; margin-right: 5px;"></i>
+                                    {{ audit.auditor_name }}
+                                </td>
+                                <td>
+                                    {% if audit.status|lower == 'planned' %}
+                                        <span class="status-badge status-planned">
+                                            <i class="fas fa-clock"></i> Planned
+                                        </span>
+                                    {% elif audit.status|lower == 'in progress' or audit.status|lower == 'in-progress' %}
+                                        <span class="status-badge status-in-progress">
+                                            <i class="fas fa-spinner"></i> In Progress
+                                        </span>
+                                    {% elif audit.status|lower == 'completed' %}
+                                        <span class="status-badge status-completed">
+                                            <i class="fas fa-check-circle"></i> Completed
+                                        </span>
+                                    {% elif audit.status|lower == 'cancelled' %}
+                                        <span class="status-badge status-cancelled">
+                                            <i class="fas fa-times-circle"></i> Cancelled
+                                        </span>
+                                    {% else %}
+                                        <span class="status-badge status-planned">
+                                            {{ audit.status }}
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="/audit/{{ audit.id }}" class="findings-link">
+                                        <i class="fas fa-clipboard-list"></i> View Findings
+                                        <i class="fas fa-arrow-right"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="5">
+                                    <div class="empty-state">
+                                        <i class="fas fa-calendar-times"></i>
+                                        <p>No audits added yet</p>
+                                        <p class="hint">Click the "Add Audit Year" button to add your first IOSA audit</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Back Button -->
+            <a href="/operators" class="back-link">
+                <i class="fas fa-arrow-left"></i> Back to Operators
+            </a>
+
+            <div class="footer">
+                <i class="fas fa-plane"></i> IOSA Audit Management System <i class="fas fa-plane"></i>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
