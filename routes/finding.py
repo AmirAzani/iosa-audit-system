@@ -34,6 +34,8 @@ def add_finding():
         "add_finding.html",
         audit=audit
     )
+
+
 # ===============================
 # SAVE FINDING
 # ===============================
@@ -63,3 +65,18 @@ def save_finding():
     db.session.commit()
 
     return redirect(url_for("finding.list_findings"))
+
+
+# ===============================
+# VIEW FINDING DETAILS
+# ===============================
+@finding_bp.route("/finding/<int:finding_id>")
+@login_required
+def view_finding(finding_id):
+
+    finding = Finding.query.get_or_404(finding_id)
+
+    return render_template(
+        "view_finding.html",
+        finding=finding
+    )

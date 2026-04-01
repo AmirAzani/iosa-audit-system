@@ -169,6 +169,11 @@
             color: #ffc107;
         }
 
+        .stat-icon.total {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+        }
+
         .stat-content h4 {
             font-size: 0.9em;
             color: #6c757d;
@@ -255,11 +260,13 @@
         }
 
         tbody tr {
-            transition: background-color 0.3s ease;
+            transition: all 0.3s ease;
+            cursor: pointer;
         }
 
         tbody tr:hover {
             background-color: #f8f9fa;
+            transform: translateX(5px);
         }
 
         /* Finding Type Badges */
@@ -529,7 +536,7 @@
                 </div>
 
                 <div class="stat-card">
-                    <div class="stat-icon" style="background: rgba(102, 126, 234, 0.1); color: #667eea;">
+                    <div class="stat-icon total">
                         <i class="fas fa-clipboard-list"></i>
                     </div>
                     <div class="stat-content">
@@ -560,7 +567,7 @@
                     <tbody>
                         {% if findings %}
                             {% for finding in findings %}
-                            <tr>
+                            <tr onclick="window.location.href='/finding/{{ finding.id }}'">
                                 <td>
                                     {% if finding.type|lower == 'finding' %}
                                         <span class="type-badge type-finding">
