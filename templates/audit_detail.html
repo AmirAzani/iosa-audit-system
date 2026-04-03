@@ -189,8 +189,16 @@
         /* Action Bar */
         .action-bar {
             display: flex;
-            justify-content: flex-end;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
         }
 
         .add-btn {
@@ -215,7 +223,29 @@
             box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
         }
 
-        .add-btn i {
+        .export-btn {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 10px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+        }
+
+        .export-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(40, 167, 69, 0.4);
+        }
+
+        .add-btn i, .export-btn i {
             font-size: 1.1em;
         }
 
@@ -288,37 +318,6 @@
         .type-observation {
             background: rgba(255, 193, 7, 0.1);
             color: #856404;
-        }
-
-        /* Status Badges */
-        .status-badge {
-            padding: 5px 12px;
-            border-radius: 30px;
-            font-size: 0.85em;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .status-open {
-            background: rgba(220, 53, 69, 0.1);
-            color: #dc3545;
-        }
-
-        .status-in-progress {
-            background: rgba(255, 193, 7, 0.1);
-            color: #856404;
-        }
-
-        .status-closed {
-            background: rgba(40, 167, 69, 0.1);
-            color: #28a745;
-        }
-
-        .status-default {
-            background: #e9ecef;
-            color: #495057;
         }
 
         /* ISARP Code Style */
@@ -409,10 +408,15 @@
             }
 
             .action-bar {
-                justify-content: center;
+                flex-direction: column;
             }
 
-            .add-btn {
+            .btn-group {
+                width: 100%;
+                flex-direction: column;
+            }
+
+            .add-btn, .export-btn {
                 width: 100%;
                 justify-content: center;
             }
@@ -546,11 +550,16 @@
                 </div>
             </div>
 
-            <!-- Action Bar -->
+            <!-- Action Bar with both buttons -->
             <div class="action-bar">
-                <a href="/add_finding?audit_id={{ audit.id }}" class="add-btn">
-                    <i class="fas fa-plus-circle"></i> Add Finding / Observation
-                </a>
+                <div class="btn-group">
+                    <a href="/add_finding?audit_id={{ audit.id }}" class="add-btn">
+                        <i class="fas fa-plus-circle"></i> Add Finding / Observation
+                    </a>
+                    <a href="/export/{{ audit.id }}" class="export-btn">
+                        <i class="fas fa-file-excel"></i> Export to Excel
+                    </a>
+                </div>
             </div>
 
             <!-- Findings Table -->
@@ -561,7 +570,6 @@
                             <th><i class="fas fa-tag"></i> Type</th>
                             <th><i class="fas fa-code"></i> ISARP Code</th>
                             <th><i class="fas fa-file-alt"></i> Requirement</th>
-                            <th><i class="fas fa-flag"></i> Status</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -583,30 +591,11 @@
                                     <span class="isarp-code">{{ finding.isarp_code }}</span>
                                 </td>
                                 <td>{{ finding.isarp_requirement }}</td>
-                                <td>
-                                    {% if finding.status|lower == 'open' %}
-                                        <span class="status-badge status-open">
-                                            <i class="fas fa-clock"></i> Open
-                                        </span>
-                                    {% elif finding.status|lower == 'in progress' or finding.status|lower == 'in-progress' %}
-                                        <span class="status-badge status-in-progress">
-                                            <i class="fas fa-spinner"></i> In Progress
-                                        </span>
-                                    {% elif finding.status|lower == 'closed' %}
-                                        <span class="status-badge status-closed">
-                                            <i class="fas fa-check-circle"></i> Closed
-                                        </span>
-                                    {% else %}
-                                        <span class="status-badge status-default">
-                                            {{ finding.status }}
-                                        </span>
-                                    {% endif %}
-                                </td>
                             </tr>
                             {% endfor %}
                         {% else %}
                             <tr>
-                                <td colspan="4">
+                                <td colspan="3">
                                     <div class="empty-state">
                                         <i class="fas fa-clipboard-list"></i>
                                         <p>No findings or observations recorded</p>

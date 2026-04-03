@@ -117,36 +117,6 @@
             color: #856404;
         }
 
-        .status-badge {
-            padding: 5px 12px;
-            border-radius: 30px;
-            font-size: 0.85em;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .status-open {
-            background: rgba(220, 53, 69, 0.1);
-            color: #dc3545;
-        }
-
-        .status-in-progress {
-            background: rgba(255, 193, 7, 0.1);
-            color: #856404;
-        }
-
-        .status-closed {
-            background: rgba(40, 167, 69, 0.1);
-            color: #28a745;
-        }
-
-        .status-default {
-            background: #e9ecef;
-            color: #495057;
-        }
-
         .isarp-badge {
             background: rgba(102, 126, 234, 0.1);
             color: #667eea;
@@ -324,31 +294,6 @@
                         {% else %}
                             <span class="type-badge type-observation">
                                 <i class="fas fa-eye"></i> Observation
-                            </span>
-                        {% endif %}
-                    </div>
-                </div>
-
-                <div class="info-item">
-                    <div class="info-label">
-                        <i class="fas fa-flag"></i> Status
-                    </div>
-                    <div class="info-value">
-                        {% if finding.status|lower == 'open' %}
-                            <span class="status-badge status-open">
-                                <i class="fas fa-clock"></i> Open
-                            </span>
-                        {% elif finding.status|lower == 'in progress' or finding.status|lower == 'in-progress' %}
-                            <span class="status-badge status-in-progress">
-                                <i class="fas fa-spinner"></i> In Progress
-                            </span>
-                        {% elif finding.status|lower == 'closed' %}
-                            <span class="status-badge status-closed">
-                                <i class="fas fa-check-circle"></i> Closed
-                            </span>
-                        {% else %}
-                            <span class="status-badge status-default">
-                                {{ finding.status }}
                             </span>
                         {% endif %}
                     </div>

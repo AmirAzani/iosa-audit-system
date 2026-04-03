@@ -1,6 +1,8 @@
-from flask import Blueprint, render_template, request, redirect, url_for
+from flask import Blueprint, render_template, request, redirect, url_for, send_file
 from flask_login import login_required
 from models import Finding, Audit, db
+from openpyxl import Workbook
+import io
 
 finding_bp = Blueprint("finding", __name__)
 
@@ -79,4 +81,51 @@ def view_finding(finding_id):
     return render_template(
         "view_finding.html",
         finding=finding
+    )
+
+
+# ===============================
+# EXPORT FINDINGS TO EXCEL
+# ===============================
+@finding_bp.route("/export/<int:audit_id>")
+@login_required
+def export_excel(audit_id):
+
+    audit = Audit.query.get_or_404(audit_id)
+    findings = Finding.query.filter_by(audit_id=audit_id).all()
+
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Findings"
+
+    # Header
+    ws.append([
+        "Type",
+        "ISARP Code",
+        "Requirement",
+        "Root Cause",
+        "Corrective Action",
+        
+    ])
+
+    # Data
+    for f in findings:
+        ws.append([
+            f.type,
+            f.isarp_code,
+            f.isarp_requirement,
+            f.root_cause,
+            f.corrective_action,
+            
+        ])
+
+    # Save to memory
+    output = io.BytesIO()
+    wb.save(output)
+    output.seek(0)
+
+    return send_file(
+        output,
+        download_name=f"audit_{audit_id}_findings.xlsx",
+        as_attachment=True
     )
