@@ -104,3 +104,56 @@ def save_audit():
 
     # redirect back to operator page
     return redirect(url_for("operator.operator_detail", id=operator_id))
+
+
+# ================================
+# EDIT AUDIT PAGE
+# ================================
+@audit_bp.route("/edit_audit/<int:audit_id>", methods=["GET", "POST"])
+@login_required
+def edit_audit(audit_id):
+
+    audit = Audit.query.get_or_404(audit_id)
+
+    if request.method == "POST":
+        # Update audit details
+        audit.audit_type = request.form.get("audit_type")
+        audit_year = request.form.get("audit_year")
+        if audit_year:
+            audit.audit_date = datetime(int(audit_year), 1, 1).date()
+        audit.auditor_name = request.form.get("auditor_name")
+        audit.status = request.form.get("status")
+
+        db.session.commit()
+        flash("Audit updated successfully!", "success")
+        return redirect(url_for("audit.audit_detail", audit_id=audit.id))
+
+    # Extract year from audit_date for display
+    audit_year = audit.audit_date.year if audit.audit_date else None
+
+    return render_template(
+        "edit_audit.html",
+        audit=audit,
+        audit_year=audit_year
+    )
+
+
+# ================================
+# DELETE AUDIT
+# ================================
+@audit_bp.route("/delete_audit/<int:audit_id>", methods=["POST"])
+@login_required
+def delete_audit(audit_id):
+
+    audit = Audit.query.get_or_404(audit_id)
+    operator_id = audit.operator_id
+
+    # Delete all findings related to this audit first
+    from models import Finding
+    Finding.query.filter_by(audit_id=audit_id).delete()
+
+    db.session.delete(audit)
+    db.session.commit()
+
+    flash("Audit deleted successfully!", "success")
+    return redirect(url_for("operator.operator_detail", id=operator_id))

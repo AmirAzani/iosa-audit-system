@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excel Import - Select Sheet</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+            animation: slideIn 0.5s ease;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h2 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .header i {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .section-title i {
+            font-size: 1.5em;
+            color: #667eea;
+        }
+
+        .section-title h3 {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1em;
+            background: white;
+            cursor: pointer;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 10px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-import {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            width: 100%;
+        }
+
+        .btn-import:hover {
+            box-shadow: 0 10px 20px rgba(40, 167, 69, 0.3);
+        }
+
+        .preview-table {
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+
+        .preview-table table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9em;
+        }
+
+        .preview-table th {
+            background: #667eea;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .preview-table td {
+            padding: 10px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .preview-table tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .errors-list {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            border-radius: 10px;
+            padding: 15px 20px;
+            margin-top: 15px;
+        }
+
+        .errors-list h4 {
+            color: #721c24;
+            margin-bottom: 10px;
+        }
+
+        .errors-list ul {
+            margin-left: 20px;
+            color: #721c24;
+        }
+
+        .errors-list li {
+            margin-bottom: 5px;
+        }
+
+        .no-errors {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            border-radius: 10px;
+            padding: 15px 20px;
+            margin-top: 15px;
+            color: #155724;
+        }
+
+        .filename {
+            background: #e9ecef;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            color: #495057;
+        }
+
+        .filename i {
+            color: #667eea;
+            margin-right: 8px;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        hr {
+            margin: 30px 0;
+            border: none;
+            border-top: 2px solid #e9ecef;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <i class="fas fa-file-excel"></i>
+            <h2>Excel Import Wizard</h2>
+            <p>Select a sheet to import data from</p>
+        </div>
+
+        <div class="content">
+            <!-- Filename Display -->
+            <div class="filename">
+                <i class="fas fa-file-excel"></i> File: <strong>{{ filename }}</strong>
+            </div>
+
+            <!-- Step 1: Select Sheet -->
+            <div class="section">
+                <div class="section-title">
+                    <i class="fas fa-layer-group"></i>
+                    <h3>Step 1: Select Sheet</h3>
+                </div>
+
+                <form action="/process" method="POST">
+                    <input type="hidden" name="filename" value="{{ filename }}">
+                    <input type="hidden" name="audit_id" value="{{ audit_id }}">  <!-- ✅ ADDED THIS -->
+                    
+                    <div class="form-group">
+                        <label for="sheet">Choose a sheet to process:</label>
+                        <select name="sheet" id="sheet">
+                            {% for sheet in sheets %}
+                                <option value="{{ sheet }}">{{ sheet }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn">
+                        <i class="fas fa-play"></i> Process Sheet
+                    </button>
+                </form>
+            </div>
+
+            <!-- Step 2: Preview Data (only shown if tables exist) -->
+            {% if tables %}
+            <hr>
+            <div class="section">
+                <div class="section-title">
+                    <i class="fas fa-eye"></i>
+                    <h3>Step 2: Preview Data</h3>
+                </div>
+
+                <div class="preview-table">
+                    {% for table in tables %}
+                        {{ table|safe }}
+                    {% endfor %}
+                </div>
+
+                <!-- Errors Section -->
+                {% if errors %}
+                    <div class="errors-list">
+                        <h4><i class="fas fa-exclamation-triangle"></i> Validation Errors Found</h4>
+                        <ul>
+                            {% for error in errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        <p style="margin-top: 10px; font-size: 0.9em;">
+                            <i class="fas fa-info-circle"></i> 
+                            Please fix these errors in your Excel file before importing.
+                        </p>
+                    </div>
+                {% else %}
+                    <div class="no-errors">
+                        <i class="fas fa-check-circle"></i> 
+                        No validation errors found! Data is ready to import.
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Step 3: Confirm Import (only shown if no errors) -->
+            {% if not errors %}
+            <form action="/import" method="POST">
+                <input type="hidden" name="audit_id" value="{{ audit_id }}">  <!-- ✅ ADDED THIS -->
+                <button type="submit" class="btn btn-import" 
+                        onclick="return confirm('Are you sure you want to import this data? This action cannot be undone.');">
+                    <i class="fas fa-database"></i> Confirm Import to Database
+                </button>
+            </form>
+            {% endif %}
+            {% endif %}
+
+            <!-- Back Link -->
+            <div style="margin-top: 20px; text-align: center;">
+                <a href="/upload-page" style="color: #6c757d; text-decoration: none;">
+                    <i class="fas fa-arrow-left"></i> Upload a different file
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

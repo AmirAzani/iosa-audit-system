@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, send_file
+from flask import Blueprint, render_template, request, redirect, url_for, send_file, flash
 from flask_login import login_required
 from models import Finding, Audit, db
 from openpyxl import Workbook
@@ -45,28 +45,29 @@ def add_finding():
 @login_required
 def save_finding():
 
+    # Get audit_id first
+    audit_id = request.form["audit_id"]
+    
     new_finding = Finding(
-
-        audit_id=request.form["audit_id"],
+        audit_id=audit_id,
         type=request.form["type"],
-
         isarp_code=request.form["isarp_code"],
         isarp_requirement=request.form["isarp_requirement"],
-
         finding_details=request.form["finding_details"],
-
         root_cause=request.form["root_cause"],
-
         corrective_action=request.form["corrective_action"],
         final_review=request.form["final_review"],
-
         status=request.form["status"]
     )
 
     db.session.add(new_finding)
     db.session.commit()
-
-    return redirect(url_for("finding.list_findings"))
+    
+    # Flash success message
+    flash("Finding / Observation saved successfully!", "success")
+    
+    # ✅ Redirect to AUDIT DETAIL page (since audit_detail route exists!)
+    return redirect(url_for("audit.audit_detail", audit_id=audit_id))
 
 
 # ===============================
@@ -83,10 +84,10 @@ def view_finding(finding_id):
         finding=finding
     )
 
+
 # ===============================
 # DELETE FINDING
 # ===============================
-
 @finding_bp.route("/delete_finding/<int:finding_id>", methods=["POST"])
 @login_required
 def delete_finding(finding_id):
@@ -96,13 +97,15 @@ def delete_finding(finding_id):
 
     db.session.delete(finding)
     db.session.commit()
+    
+    flash("Finding / Observation deleted successfully!", "success")
 
-    return redirect(f"/audit/{audit_id}")
+    return redirect(url_for("audit.audit_detail", audit_id=audit_id))
+
 
 # ===============================
 # EDIT FINDING
 # ===============================
-
 @finding_bp.route("/edit_finding/<int:finding_id>", methods=["GET", "POST"])
 @login_required
 def edit_finding(finding_id):
@@ -115,10 +118,13 @@ def edit_finding(finding_id):
         finding.final_review = request.form.get("final_review")
 
         db.session.commit()
+        
+        flash("Finding / Observation updated successfully!", "success")
 
-        return redirect(f"/finding/{finding.id}")
+        return redirect(url_for("finding.view_finding", finding_id=finding.id))
 
     return render_template("edit_finding.html", finding=finding)
+
 
 # ===============================
 # EXPORT FINDINGS TO EXCEL
@@ -141,7 +147,8 @@ def export_excel(audit_id):
         "Requirement",
         "Root Cause",
         "Corrective Action",
-        
+        "Final Review",
+        "Status"
     ])
 
     # Data
@@ -152,7 +159,8 @@ def export_excel(audit_id):
             f.isarp_requirement,
             f.root_cause,
             f.corrective_action,
-            
+            f.final_review,
+            f.status
         ])
 
     # Save to memory

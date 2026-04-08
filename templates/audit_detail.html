@@ -33,6 +33,35 @@
             color: white;
             padding: 30px;
             text-align: center;
+            position: relative;
+        }
+
+        .top-home-btn {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 8px 18px;
+            border-radius: 30px;
+            font-size: 0.9em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .top-home-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .top-home-btn i {
+            font-size: 0.9em;
         }
 
         .header h1 {
@@ -199,6 +228,7 @@
         .btn-group {
             display: flex;
             gap: 15px;
+            flex-wrap: wrap;
         }
 
         .add-btn {
@@ -245,7 +275,42 @@
             box-shadow: 0 10px 25px rgba(40, 167, 69, 0.4);
         }
 
-        .add-btn i, .export-btn i {
+        .import-btn {
+            background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 10px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 5px 15px rgba(23, 162, 184, 0.3);
+        }
+
+        .import-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(23, 162, 184, 0.4);
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .file-input-wrapper input[type="file"] {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .add-btn i, .export-btn i, .import-btn i {
             font-size: 1.1em;
         }
 
@@ -376,6 +441,15 @@
             color: #667eea;
         }
 
+        /* Navigation Buttons Container */
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: flex-start;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
         /* Animation */
         @keyframes slideIn {
             from {
@@ -398,6 +472,12 @@
                 font-size: 1.8em;
             }
 
+            .top-home-btn {
+                position: static;
+                display: inline-block;
+                margin-top: 15px;
+            }
+
             .audit-info {
                 flex-direction: column;
                 gap: 15px;
@@ -416,7 +496,7 @@
                 flex-direction: column;
             }
 
-            .add-btn, .export-btn {
+            .add-btn, .export-btn, .import-btn {
                 width: 100%;
                 justify-content: center;
             }
@@ -427,6 +507,10 @@
 
             table {
                 font-size: 0.9em;
+            }
+
+            .nav-buttons {
+                flex-direction: column;
             }
         }
 
@@ -468,6 +552,9 @@
 <body>
     <div class="container">
         <div class="header">
+            <a href="/operators" class="top-home-btn">
+                <i class="fas fa-home"></i> Home
+            </a>
             <h1>
                 <i class="fas fa-plane"></i>
                 {{ audit.operator.airline_name }}
@@ -550,7 +637,7 @@
                 </div>
             </div>
 
-            <!-- Action Bar with both buttons -->
+            <!-- Action Bar with all buttons -->
             <div class="action-bar">
                 <div class="btn-group">
                     <a href="/add_finding?audit_id={{ audit.id }}" class="add-btn">
@@ -559,6 +646,17 @@
                     <a href="/export/{{ audit.id }}" class="export-btn">
                         <i class="fas fa-file-excel"></i> Export to Excel
                     </a>
+                    
+                    <!-- Import Excel Button -->
+                    <form action="/upload" method="POST" enctype="multipart/form-data" style="display:inline;">
+                        <input type="hidden" name="audit_id" value="{{ audit.id }}">
+                        <div class="file-input-wrapper" style="position: relative; display: inline-block;">
+                            <input type="file" name="file" accept=".xlsx, .xls" required style="position: absolute; opacity: 0; width: 100%; height: 100%; cursor: pointer;">
+                            <button type="submit" class="import-btn" style="cursor: pointer;">
+                                <i class="fas fa-file-import"></i> Import Excel
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
 
@@ -609,9 +707,11 @@
             </div>
 
             <!-- Back Button -->
-            <a href="/operator/{{ audit.operator.id }}" class="back-link">
-                <i class="fas fa-arrow-left"></i> Back to {{ audit.operator.airline_name }}
-            </a>
+            <div class="nav-buttons">
+                <a href="/operator/{{ audit.operator.id }}" class="back-link">
+                    <i class="fas fa-arrow-left"></i> Back to {{ audit.operator.airline_name }}
+                </a>
+            </div>
 
             <div class="footer">
                 <i class="fas fa-plane"></i> IOSA Audit Management System <i class="fas fa-plane"></i>
