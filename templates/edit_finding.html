@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Finding - {{ finding.isarp_code }}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+            animation: slideIn 0.5s ease;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h2 {
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            font-weight: 600;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .header h2 i {
+            margin-right: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.95;
+            font-weight: 300;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        /* Info Card */
+        .info-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            border: 1px solid rgba(102, 126, 234, 0.2);
+        }
+
+        .info-item {
+            margin-bottom: 10px;
+        }
+
+        .info-label {
+            font-size: 0.85em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #6c757d;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .info-label i {
+            color: #667eea;
+        }
+
+        .info-value {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #495057;
+            margin-top: 5px;
+        }
+
+        .isarp-badge {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+            padding: 5px 12px;
+            border-radius: 30px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group label i {
+            color: #667eea;
+            margin-right: 8px;
+        }
+
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1em;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: all 0.3s ease;
+            resize: vertical;
+        }
+
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-group textarea::placeholder {
+            color: #aaa;
+            font-weight: 300;
+        }
+
+        .input-hint {
+            font-size: 0.8em;
+            color: #6c757d;
+            margin-top: 5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .input-hint i {
+            color: #667eea;
+        }
+
+        /* Button Group */
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            text-align: center;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(108, 117, 125, 0.3);
+        }
+
+        /* Animation */
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .content {
+                padding: 20px;
+            }
+
+            .header h2 {
+                font-size: 1.8em;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e9ecef;
+            color: #6c757d;
+            font-size: 0.9em;
+        }
+
+        .footer i {
+            color: #667eea;
+            margin: 0 5px;
+        }
+    </style>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>
+                <i class="fas fa-edit"></i>
+                Edit Finding
+            </h2>
+            <p>{{ finding.isarp_code }} • {{ finding.audit.operator.airline_name }}</p>
+        </div>
+
+        <div class="content">
+            <!-- Information Card -->
+            <div class="info-card">
+                <div class="info-item">
+                    <div class="info-label">
+                        <i class="fas fa-code"></i> ISARP Code
+                    </div>
+                    <div class="info-value">
+                        <span class="isarp-badge">{{ finding.isarp_code }}</span>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">
+                        <i class="fas fa-tag"></i> Type
+                    </div>
+                    <div class="info-value">
+                        {% if finding.type|lower == 'finding' %}
+                            Finding
+                        {% else %}
+                            Observation
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <form method="POST">
+                <!-- Root Cause -->
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-search"></i> Root Cause
+                    </label>
+                    <textarea name="root_cause" 
+                              rows="4" 
+                              placeholder="Describe the root cause of this finding...">{{ finding.root_cause or '' }}</textarea>
+                    <div class="input-hint">
+                        <i class="fas fa-info-circle"></i>
+                        Explain the underlying cause of the issue
+                    </div>
+                </div>
+
+                <!-- Corrective Action -->
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-tools"></i> Corrective Action
+                    </label>
+                    <textarea name="corrective_action" 
+                              rows="4" 
+                              placeholder="Describe the corrective action taken...">{{ finding.corrective_action or '' }}</textarea>
+                    <div class="input-hint">
+                        <i class="fas fa-info-circle"></i>
+                        Describe the actions taken to correct the issue
+                    </div>
+                </div>
+
+                <!-- Final Review -->
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-check-double"></i> Final Review
+                    </label>
+                    <textarea name="final_review" 
+                              rows="4" 
+                              placeholder="Add final review comments...">{{ finding.final_review or '' }}</textarea>
+                    <div class="input-hint">
+                        <i class="fas fa-info-circle"></i>
+                        Optional - add any final review notes
+                    </div>
+                </div>
+
+                <!-- Buttons -->
+                <div class="button-group">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Save Changes
+                    </button>
+                    <a href="/finding/{{ finding.id }}" class="btn btn-secondary">
+                        <i class="fas fa-times"></i> Cancel
+                    </a>
+                </div>
+            </form>
+
+            <div class="footer">
+                <i class="fas fa-plane"></i> IOSA Audit Management System <i class="fas fa-plane"></i>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

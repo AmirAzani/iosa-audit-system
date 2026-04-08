@@ -285,14 +285,18 @@
             background-color: #f8f9fa;
         }
 
-        .alliance-badge {
-            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
-            color: white;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.85em;
-            font-weight: 500;
-            display: inline-block;
+        /* Alliance Logo Styles */
+        .alliance-logo {
+            width: 80px;
+            height: auto;
+            max-height: 30px;
+            object-fit: contain;
+            vertical-align: middle;
+        }
+
+        .alliance-placeholder {
+            color: #adb5bd;
+            font-style: italic;
         }
 
         .iata-badge {
@@ -469,6 +473,10 @@
                 text-align: center;
                 margin-right: 0;
             }
+            
+            .alliance-logo {
+                width: 60px;
+            }
         }
 
         /* Scrollbar Styling */
@@ -576,7 +584,7 @@
                         <input type="text" 
                                id="alliance" 
                                name="alliance" 
-                               placeholder="e.g., Oneworld, Star Alliance">
+                               placeholder="e.g., oneworld, Star Alliance">
                     </div>
 
                     <button type="submit" class="submit-btn">
@@ -626,12 +634,25 @@
                                     </td>
                                     <td>
                                         {% if operator.alliance %}
-                                            <span class="alliance-badge">
-                                                <i class="fas fa-star"></i>
-                                                {{ operator.alliance }}
-                                            </span>
+                                            {% set alliance_lower = operator.alliance|lower %}
+                                            {% if 'oneworld' in alliance_lower or 'one world' in alliance_lower %}
+                                                <img src="{{ url_for('static', filename='images/oneworld.png') }}" 
+                                                     alt="oneworld" 
+                                                     class="alliance-logo"
+                                                     title="oneworld">
+                                            {% elif 'star' in alliance_lower %}
+                                                <img src="{{ url_for('static', filename='images/star-alliance.png') }}" 
+                                                     alt="Star Alliance" 
+                                                     class="alliance-logo"
+                                                     title="Star Alliance">
+                                            {% else %}
+                                                <span class="alliance-badge">
+                                                    <i class="fas fa-star"></i>
+                                                    {{ operator.alliance }}
+                                                </span>
+                                            {% endif %}
                                         {% else %}
-                                            <span style="color: #adb5bd; font-style: italic;">—</span>
+                                            <span class="alliance-placeholder">—</span>
                                         {% endif %}
                                     </td>
                                     <td>

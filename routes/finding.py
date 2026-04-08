@@ -83,6 +83,42 @@ def view_finding(finding_id):
         finding=finding
     )
 
+# ===============================
+# DELETE FINDING
+# ===============================
+
+@finding_bp.route("/delete_finding/<int:finding_id>", methods=["POST"])
+@login_required
+def delete_finding(finding_id):
+
+    finding = Finding.query.get_or_404(finding_id)
+    audit_id = finding.audit.id
+
+    db.session.delete(finding)
+    db.session.commit()
+
+    return redirect(f"/audit/{audit_id}")
+
+# ===============================
+# EDIT FINDING
+# ===============================
+
+@finding_bp.route("/edit_finding/<int:finding_id>", methods=["GET", "POST"])
+@login_required
+def edit_finding(finding_id):
+
+    finding = Finding.query.get_or_404(finding_id)
+
+    if request.method == "POST":
+        finding.root_cause = request.form.get("root_cause")
+        finding.corrective_action = request.form.get("corrective_action")
+        finding.final_review = request.form.get("final_review")
+
+        db.session.commit()
+
+        return redirect(f"/finding/{finding.id}")
+
+    return render_template("edit_finding.html", finding=finding)
 
 # ===============================
 # EXPORT FINDINGS TO EXCEL

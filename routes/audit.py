@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required
 from models import db, Audit, Operator
+from datetime import datetime
 
 audit_bp = Blueprint('audit', __name__)
 
@@ -49,6 +50,7 @@ def audit_detail(audit_id):
         total_findings=total_findings,
         total_observations=total_observations
     )
+
 # ================================
 # ADD AUDIT PAGE
 # ================================
@@ -77,17 +79,23 @@ def save_audit():
 
     operator_id = request.form.get("operator_id")
     audit_type = request.form.get("audit_type")
-    audit_year = request.form.get("audit_year")
+    audit_year = request.form.get("audit_year")  # Keep as audit_year from form
     auditor_name = request.form.get("auditor_name")
     status = request.form.get("status")
 
+    # Convert year to date (use January 1st of that year)
+    if audit_year:
+        audit_date = datetime(int(audit_year), 1, 1).date()
+    else:
+        audit_date = None
+
     new_audit = Audit(
-    operator_id=operator_id,
-    audit_type=audit_type,
-    audit_year=audit_year,
-    auditor_name=auditor_name,
-    status=status
-)
+        operator_id=operator_id,
+        audit_type=audit_type,
+        audit_date=audit_date,  # Model uses audit_date
+        auditor_name=auditor_name,
+        status=status
+    )
 
     db.session.add(new_audit)
     db.session.commit()
@@ -96,4 +104,3 @@ def save_audit():
 
     # redirect back to operator page
     return redirect(url_for("operator.operator_detail", id=operator_id))
-    
