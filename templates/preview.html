@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Excel Import - Select Sheet</title>
+    <title>Excel Import Wizard</title>
     <style>
         * {
             margin: 0;
@@ -45,8 +45,26 @@
             margin-bottom: 10px;
         }
 
+        .header p {
+            font-size: 1em;
+            opacity: 0.95;
+        }
+
         .content {
             padding: 40px;
+        }
+
+        .filename-box {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px 20px;
+            margin-bottom: 25px;
+            border-left: 4px solid #667eea;
+        }
+
+        .filename-box i {
+            color: #667eea;
+            margin-right: 8px;
         }
 
         .section {
@@ -76,10 +94,6 @@
             color: #495057;
         }
 
-        .form-group {
-            margin-bottom: 20px;
-        }
-
         label {
             display: block;
             margin-bottom: 8px;
@@ -106,12 +120,13 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            padding: 12px 30px;
+            padding: 12px 25px;
             border-radius: 10px;
             font-size: 1em;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
+            margin-top: 15px;
         }
 
         .btn:hover {
@@ -185,19 +200,42 @@
             padding: 15px 20px;
             margin-top: 15px;
             color: #155724;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        .filename {
+        .no-errors i {
+            font-size: 1.2em;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #6c757d;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 10px 20px;
+            border-radius: 10px;
+            background: #f8f9fa;
+            transition: all 0.3s ease;
+        }
+
+        .back-link:hover {
             background: #e9ecef;
-            padding: 10px 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
             color: #495057;
+            transform: translateX(-5px);
         }
 
-        .filename i {
+        .back-link i {
             color: #667eea;
-            margin-right: 8px;
+        }
+
+        hr {
+            margin: 30px 0;
+            border: none;
+            border-top: 2px solid #e9ecef;
         }
 
         @keyframes slideIn {
@@ -211,10 +249,14 @@
             }
         }
 
-        hr {
-            margin: 30px 0;
-            border: none;
-            border-top: 2px solid #e9ecef;
+        @media (max-width: 768px) {
+            .content {
+                padding: 20px;
+            }
+            
+            .btn {
+                width: 100%;
+            }
         }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -224,16 +266,17 @@
         <div class="header">
             <i class="fas fa-file-excel"></i>
             <h2>Excel Import Wizard</h2>
-            <p>Select a sheet to import data from</p>
+            <p>Import findings from Excel file</p>
         </div>
 
         <div class="content">
             <!-- Filename Display -->
-            <div class="filename">
-                <i class="fas fa-file-excel"></i> File: <strong>{{ filename }}</strong>
+            <div class="filename-box">
+                <i class="fas fa-file-excel"></i>
+                <strong>File:</strong> {{ filename }}
             </div>
 
-            <!-- Step 1: Select Sheet -->
+            <!-- STEP 1: Select Sheet -->
             <div class="section">
                 <div class="section-title">
                     <i class="fas fa-layer-group"></i>
@@ -242,16 +285,14 @@
 
                 <form action="/process" method="POST">
                     <input type="hidden" name="filename" value="{{ filename }}">
-                    <input type="hidden" name="audit_id" value="{{ audit_id }}">  <!-- ✅ ADDED THIS -->
-                    
-                    <div class="form-group">
-                        <label for="sheet">Choose a sheet to process:</label>
-                        <select name="sheet" id="sheet">
-                            {% for sheet in sheets %}
-                                <option value="{{ sheet }}">{{ sheet }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
+                    <input type="hidden" name="audit_id" value="{{ audit_id }}">
+
+                    <label for="sheet">Choose a sheet:</label>
+                    <select name="sheet" id="sheet">
+                        {% for sheet in sheets %}
+                            <option value="{{ sheet }}">{{ sheet }}</option>
+                        {% endfor %}
+                    </select>
 
                     <button type="submit" class="btn">
                         <i class="fas fa-play"></i> Process Sheet
@@ -259,9 +300,8 @@
                 </form>
             </div>
 
-            <!-- Step 2: Preview Data (only shown if tables exist) -->
+            <!-- STEP 2: Preview Data -->
             {% if tables %}
-            <hr>
             <div class="section">
                 <div class="section-title">
                     <i class="fas fa-eye"></i>
@@ -279,41 +319,50 @@
                     <div class="errors-list">
                         <h4><i class="fas fa-exclamation-triangle"></i> Validation Errors Found</h4>
                         <ul>
-                            {% for error in errors %}
-                                <li>{{ error }}</li>
+                            {% for e in errors %}
+                                <li>{{ e }}</li>
                             {% endfor %}
                         </ul>
                         <p style="margin-top: 10px; font-size: 0.9em;">
-                            <i class="fas fa-info-circle"></i> 
                             Please fix these errors in your Excel file before importing.
                         </p>
                     </div>
                 {% else %}
                     <div class="no-errors">
-                        <i class="fas fa-check-circle"></i> 
+                        <i class="fas fa-check-circle"></i>
                         No validation errors found! Data is ready to import.
                     </div>
                 {% endif %}
             </div>
 
-            <!-- Step 3: Confirm Import (only shown if no errors) -->
+            <!-- STEP 3: Confirm Import -->
             {% if not errors %}
-            <form action="/import" method="POST">
-                <input type="hidden" name="audit_id" value="{{ audit_id }}">  <!-- ✅ ADDED THIS -->
-                <button type="submit" class="btn btn-import" 
-                        onclick="return confirm('Are you sure you want to import this data? This action cannot be undone.');">
-                    <i class="fas fa-database"></i> Confirm Import to Database
-                </button>
-            </form>
+            <div class="section">
+                <div class="section-title">
+                    <i class="fas fa-database"></i>
+                    <h3>Step 3: Confirm Import</h3>
+                </div>
+
+                <form action="/import" method="POST">
+                    <input type="hidden" name="audit_id" value="{{ audit_id }}">
+                    <input type="hidden" name="filename" value="{{ filename }}">
+                    <input type="hidden" name="sheet" value="{{ selected_sheet }}">
+
+                    <button type="submit" class="btn btn-import" 
+                            onclick="return confirm('Are you sure you want to import this data? This action cannot be undone.');">
+                        <i class="fas fa-check-circle"></i> Confirm Import to Database
+                    </button>
+                </form>
+            </div>
             {% endif %}
             {% endif %}
 
+            <hr>
+
             <!-- Back Link -->
-            <div style="margin-top: 20px; text-align: center;">
-                <a href="/upload-page" style="color: #6c757d; text-decoration: none;">
-                    <i class="fas fa-arrow-left"></i> Upload a different file
-                </a>
-            </div>
+            <a href="/audit/{{ audit_id }}" class="back-link">
+                <i class="fas fa-arrow-left"></i> Back to Audit
+            </a>
         </div>
     </div>
 </body>

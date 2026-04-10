@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Preview</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+            animation: slideIn 0.5s ease;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h2 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .header i {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1em;
+            opacity: 0.95;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        /* Stats Card */
+        .stats-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border: 1px solid rgba(102, 126, 234, 0.2);
+        }
+
+        .stats-icon {
+            width: 60px;
+            height: 60px;
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stats-icon i {
+            font-size: 1.8em;
+            color: #667eea;
+        }
+
+        .stats-info h3 {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: #495057;
+        }
+
+        .stats-info p {
+            color: #6c757d;
+            margin-top: 5px;
+        }
+
+        /* Errors Box */
+        .errors-box {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .errors-box h3 {
+            color: #721c24;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .errors-box ul {
+            margin-left: 25px;
+            color: #721c24;
+        }
+
+        .errors-box li {
+            margin-bottom: 5px;
+        }
+
+        /* Success Box */
+        .success-box {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .success-box i {
+            font-size: 1.5em;
+            color: #28a745;
+        }
+
+        .success-box p {
+            color: #155724;
+            font-weight: 500;
+        }
+
+        /* Table Styles */
+        .table-container {
+            background: white;
+            border-radius: 15px;
+            overflow-x: auto;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            border: 1px solid #e9ecef;
+            margin-bottom: 30px;
+        }
+
+        .table-container table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px;
+        }
+
+        .table-container th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .table-container td {
+            padding: 10px 15px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .table-container tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        /* Import Button */
+        .import-btn {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            border: none;
+            padding: 14px 30px;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+        }
+
+        .import-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(40, 167, 69, 0.4);
+        }
+
+        /* Back Link */
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #6c757d;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 10px 20px;
+            border-radius: 10px;
+            background: #f8f9fa;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .back-link:hover {
+            background: #e9ecef;
+            color: #495057;
+            transform: translateX(-5px);
+        }
+
+        .back-link i {
+            color: #667eea;
+        }
+
+        hr {
+            margin: 25px 0;
+            border: none;
+            border-top: 2px solid #e9ecef;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                padding: 20px;
+            }
+            
+            .import-btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .stats-card {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <i class="fas fa-chart-line"></i>
+            <h2>Data Preview</h2>
+            <p>Review your data before importing</p>
+        </div>
+
+        <div class="content">
+            <!-- Stats Card -->
+            <div class="stats-card">
+                <div class="stats-icon">
+                    <i class="fas fa-table"></i>
+                </div>
+                <div class="stats-info">
+                    <h3>{{ total_rows }}</h3>
+                    <p>Total Rows Found</p>
+                </div>
+            </div>
+
+            <!-- Errors or Success -->
+            {% if errors %}
+                <div class="errors-box">
+                    <h3>
+                        <i class="fas fa-exclamation-triangle"></i>
+                        Validation Errors Found
+                    </h3>
+                    <ul>
+                        {% for e in errors %}
+                            <li>{{ e }}</li>
+                        {% endfor %}
+                    </ul>
+                    <p style="margin-top: 10px; font-size: 0.9em;">
+                        Please fix these errors in your Excel file before importing.
+                    </p>
+                </div>
+            {% else %}
+                <div class="success-box">
+                    <i class="fas fa-check-circle"></i>
+                    <p>No validation errors found! Data is ready to import.</p>
+                </div>
+            {% endif %}
+
+            <hr>
+
+            <!-- Table Preview -->
+            <div class="table-container">
+                {{ tables|safe }}
+            </div>
+
+            <hr>
+
+            <!-- Import Button (only show if no errors) -->
+            {% if not errors %}
+                <form action="/import" method="POST">
+                    <input type="hidden" name="audit_id" value="{{ audit_id }}">
+                    <button type="submit" class="import-btn" 
+                            onclick="return confirm('Are you sure you want to import this data? This action cannot be undone.');">
+                        <i class="fas fa-database"></i> Confirm Import to Database
+                    </button>
+                </form>
+            {% endif %}
+
+            <br>
+
+            <!-- Back Link -->
+            <a href="/upload-page" class="back-link">
+                <i class="fas fa-arrow-left"></i> Back to Upload
+            </a>
+        </div>
+    </div>
+</body>
+</html>

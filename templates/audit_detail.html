@@ -229,6 +229,7 @@
             display: flex;
             gap: 15px;
             flex-wrap: wrap;
+            align-items: center;
         }
 
         .add-btn {
@@ -275,42 +276,43 @@
             box-shadow: 0 10px 25px rgba(40, 167, 69, 0.4);
         }
 
-        .import-btn {
-            background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
-            color: white;
-            border: none;
+        /* Import Form Styles */
+        .import-form {
+            display: inline;
+            position: relative;
+        }
+
+        .import-label {
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
             padding: 12px 25px;
             border-radius: 10px;
             font-size: 1em;
             font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
+            background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+            color: white;
             box-shadow: 0 5px 15px rgba(23, 162, 184, 0.3);
+            transition: all 0.3s ease;
         }
 
-        .import-btn:hover {
+        .import-label:hover {
             transform: translateY(-2px);
             box-shadow: 0 10px 25px rgba(23, 162, 184, 0.4);
         }
 
-        .file-input-wrapper {
-            position: relative;
-            display: inline-block;
-        }
-
-        .file-input-wrapper input[type="file"] {
+        .file-input {
             position: absolute;
             opacity: 0;
             width: 100%;
             height: 100%;
             cursor: pointer;
+            top: 0;
+            left: 0;
         }
 
-        .add-btn i, .export-btn i, .import-btn i {
+        .add-btn i, .export-btn i, .import-label i {
             font-size: 1.1em;
         }
 
@@ -318,7 +320,8 @@
         .table-container {
             background: white;
             border-radius: 15px;
-            overflow: hidden;
+            overflow-x: auto;
+            overflow-y: auto;
             box-shadow: 0 5px 15px rgba(0,0,0,0.08);
             border: 1px solid #e9ecef;
             margin-bottom: 30px;
@@ -327,6 +330,7 @@
         table {
             width: 100%;
             border-collapse: collapse;
+            min-width: 600px;
         }
 
         th {
@@ -348,6 +352,13 @@
             padding: 15px 20px;
             border-bottom: 1px solid #e9ecef;
             color: #495057;
+            word-wrap: break-word;
+            max-width: 400px;
+        }
+
+        td:last-child {
+            word-break: break-word;
+            white-space: normal;
         }
 
         tr:last-child td {
@@ -361,7 +372,6 @@
 
         tbody tr:hover {
             background-color: #f8f9fa;
-            transform: translateX(5px);
         }
 
         /* Finding Type Badges */
@@ -373,6 +383,7 @@
             display: inline-flex;
             align-items: center;
             gap: 5px;
+            white-space: nowrap;
         }
 
         .type-finding {
@@ -392,6 +403,7 @@
             background: rgba(102, 126, 234, 0.1);
             padding: 3px 8px;
             border-radius: 5px;
+            white-space: nowrap;
         }
 
         /* Empty State */
@@ -441,7 +453,6 @@
             color: #667eea;
         }
 
-        /* Navigation Buttons Container */
         .nav-buttons {
             display: flex;
             gap: 15px;
@@ -450,7 +461,6 @@
             flex-wrap: wrap;
         }
 
-        /* Animation */
         @keyframes slideIn {
             from {
                 opacity: 0;
@@ -462,7 +472,6 @@
             }
         }
 
-        /* Responsive Design */
         @media (max-width: 768px) {
             .content {
                 padding: 20px;
@@ -496,7 +505,7 @@
                 flex-direction: column;
             }
 
-            .add-btn, .export-btn, .import-btn {
+            .add-btn, .export-btn, .import-label {
                 width: 100%;
                 justify-content: center;
             }
@@ -512,9 +521,12 @@
             .nav-buttons {
                 flex-direction: column;
             }
+            
+            .type-badge, .isarp-code {
+                white-space: normal;
+            }
         }
 
-        /* Scrollbar Styling */
         .table-container::-webkit-scrollbar {
             width: 8px;
             height: 8px;
@@ -522,6 +534,7 @@
 
         .table-container::-webkit-scrollbar-track {
             background: #f1f1f1;
+            border-radius: 10px;
         }
 
         .table-container::-webkit-scrollbar-thumb {
@@ -533,7 +546,6 @@
             background: linear-gradient(135deg, #5a67d8 0%, #6b46a0 100%);
         }
 
-        /* Footer */
         .footer {
             text-align: center;
             margin-top: 20px;
@@ -546,7 +558,6 @@
             margin: 0 5px;
         }
     </style>
-    <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
@@ -648,14 +659,12 @@
                     </a>
                     
                     <!-- Import Excel Button -->
-                    <form action="/upload" method="POST" enctype="multipart/form-data" style="display:inline;">
+                    <form action="/upload" method="POST" enctype="multipart/form-data" class="import-form" id="importForm">
                         <input type="hidden" name="audit_id" value="{{ audit.id }}">
-                        <div class="file-input-wrapper" style="position: relative; display: inline-block;">
-                            <input type="file" name="file" accept=".xlsx, .xls" required style="position: absolute; opacity: 0; width: 100%; height: 100%; cursor: pointer;">
-                            <button type="submit" class="import-btn" style="cursor: pointer;">
-                                <i class="fas fa-file-import"></i> Import Excel
-                            </button>
-                        </div>
+                        <label class="import-label" id="importLabel">
+                            <i class="fas fa-file-import"></i> Import Excel
+                        </label>
+                        <input type="file" name="file" accept=".xlsx, .xls" required id="fileInput" style="display: none;">
                     </form>
                 </div>
             </div>
@@ -688,7 +697,7 @@
                                 <td>
                                     <span class="isarp-code">{{ finding.isarp_code }}</span>
                                 </td>
-                                <td>{{ finding.isarp_requirement }}</td>
+                                <td>{{ finding.isarp_requirement }}</d
                             </tr>
                             {% endfor %}
                         {% else %}
@@ -718,5 +727,17 @@
             </div>
         </div>
     </div>
+
+    <script>
+        document.getElementById('importLabel').addEventListener('click', function() {
+            document.getElementById('fileInput').click();
+        });
+        
+        document.getElementById('fileInput').addEventListener('change', function() {
+            if (this.files.length > 0) {
+                document.getElementById('importForm').submit();
+            }
+        });
+    </script>
 </body>
 </html>
