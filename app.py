@@ -13,10 +13,22 @@ app = Flask(__name__)
 # ======================
 # Configuration
 # ======================
-app.config['SECRET_KEY'] = 'supersecretkey'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root@localhost/iosa_db'
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'supersecretkey')
+
+# Database URL - Use environment variable for production, local for development
+database_url = os.environ.get('DATABASE_URL')
+if database_url:
+    # Fix for Aiven MySQL URL format (mysql:// -> mysql+pymysql://)
+    if database_url.startswith('mysql://'):
+        database_url = database_url.replace('mysql://', 'mysql+pymysql://')
+    app.config['SQLALCHEMY_DATABASE_URI'] = database_url
+else:
+    # Local development
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root@localhost/iosa_db'
+
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
+# Upload folder configuration
 UPLOAD_FOLDER = 'uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
@@ -36,7 +48,7 @@ login_manager.login_view = 'auth.login'
 
 @login_manager.user_loader
 def load_user(user_id):
-    return db.session.get(User, int(user_id))  # ✅ FIXED (no warning)
+    return db.session.get(User, int(user_id))
 
 # ======================
 # Helper Functions
@@ -115,6 +127,7 @@ def upload_file():
 
     print("❌ Invalid file type")
     return "Invalid file"
+
 # ======================
 # STEP 2 — Process
 # ======================
@@ -142,7 +155,7 @@ def process_sheet():
         filename=filename,
         sheets=excel.sheet_names,
         audit_id=audit_id,
-        selected_sheet=sheet   # ✅ IMPORTANT
+        selected_sheet=sheet
     )
 
 # ======================
@@ -193,6 +206,7 @@ def import_data():
     print(f"✅ Imported {imported} findings")
 
     return redirect(f"/audit/{audit_id}")
+
 # ======================
 # Blueprints
 # ======================
