@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required
 from models import db, Operator
+from models import Finding
 
 operator_bp = Blueprint('operator', __name__)
 
@@ -33,6 +34,54 @@ def operator_detail(id):
         audits=audits
     )
 
+
+# ===============================
+# DASHBOARD ROUTE
+# ===============================
+@operator_bp.route("/dashboard")
+@login_required
+def dashboard():
+    from models import Operator, Finding, Audit
+    
+    # Get all operators
+    operators = Operator.query.all()
+    
+    operator_stats = []
+    total_findings = 0
+    total_observations = 0
+    
+    for operator in operators:
+        findings_count = 0
+        observations_count = 0
+        
+        # Loop through all audits for this operator
+        for audit in operator.audits:
+            for finding in audit.findings:
+                if finding.type == 'Finding':
+                    findings_count += 1
+                elif finding.type == 'Observation':
+                    observations_count += 1
+        
+        total_findings += findings_count
+        total_observations += observations_count
+        
+        operator_stats.append({
+            'id': operator.id,
+            'airline_name': operator.airline_name,
+            'iata_code': operator.iata_code,
+            'alliance': operator.alliance,
+            'findings_count': findings_count,
+            'observations_count': observations_count
+        })
+    
+    # Sort by total findings + observations (highest first)
+    operator_stats.sort(key=lambda x: x['findings_count'] + x['observations_count'], reverse=True)
+    
+    return render_template('dashboard.html',
+                         operators=operators,
+                         operator_stats=operator_stats,
+                         total_findings=total_findings,
+                         total_observations=total_observations)
 # ================================
 # ADD OPERATOR (CREATE)
 # ================================
