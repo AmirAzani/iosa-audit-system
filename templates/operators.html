@@ -633,27 +633,32 @@
                                         </span>
                                     </td>
                                     <td>
-                                        {% if operator.alliance %}
-                                            {% set alliance_lower = operator.alliance|lower %}
-                                            {% if 'oneworld' in alliance_lower or 'one world' in alliance_lower %}
-                                                <img src="{{ url_for('static', filename='images/oneworld.png') }}" 
-                                                     alt="oneworld" 
-                                                     class="alliance-logo"
-                                                     title="oneworld">
-                                            {% elif 'star' in alliance_lower %}
-                                                <img src="{{ url_for('static', filename='images/star-alliance.png') }}" 
-                                                     alt="Star Alliance" 
-                                                     class="alliance-logo"
-                                                     title="Star Alliance">
-                                            {% else %}
-                                                <span class="alliance-badge">
-                                                    <i class="fas fa-star"></i>
-                                                    {{ operator.alliance }}
-                                                </span>
-                                            {% endif %}
-                                        {% else %}
-                                            <span class="alliance-placeholder">—</span>
-                                        {% endif %}
+                                       {% if operator.alliance %}
+    {% set alliance_lower = operator.alliance|lower %}
+    {% if 'oneworld' in alliance_lower or 'one world' in alliance_lower %}
+        <img src="{{ url_for('static', filename='images/oneworld.png') }}" 
+             alt="oneworld" 
+             class="alliance-logo"
+             title="oneworld">
+    {% elif 'star' in alliance_lower %}
+        <img src="{{ url_for('static', filename='images/star-alliance.png') }}" 
+             alt="Star Alliance" 
+             class="alliance-logo"
+             title="Star Alliance">
+    {% elif 'sky' in alliance_lower or 'skyteam' in alliance_lower %}
+        <img src="{{ url_for('static', filename='images/skyteam_logo.jpg') }}" 
+             alt="SkyTeam" 
+             class="alliance-logo"
+             title="SkyTeam">
+    {% else %}
+        <span class="alliance-badge">
+            <i class="fas fa-star"></i>
+            {{ operator.alliance }}
+        </span>
+    {% endif %}
+{% else %}
+    <span class="alliance-placeholder">—</span>
+{% endif %}
                                     </td>
                                     <td>
                                         <a href="/edit_operator/{{ operator.id }}" class="action-btn edit-btn">
