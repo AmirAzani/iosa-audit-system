@@ -208,6 +208,29 @@ def import_data():
     return redirect(f"/audit/{audit_id}")
 
 # ======================
+# TEMPORARY: Create admin user on startup (REMOVE AFTER FIRST RUN)
+# ======================
+with app.app_context():
+    from models import User
+    from extensions import bcrypt
+    
+    admin = User.query.filter_by(username="admin").first()
+    if not admin:
+        hashed_pw = bcrypt.generate_password_hash("admin123").decode('utf-8')
+        new_admin = User(username="admin", password=hashed_pw, role="admin")
+        db.session.add(new_admin)
+        db.session.commit()
+        print("✅ Admin user created on startup!")
+    else:
+        print(f"Admin user already exists: {admin.username}")
+        
+    # List all users for debugging
+    all_users = User.query.all()
+    print(f"Total users in database: {len(all_users)}")
+    for u in all_users:
+        print(f"  - {u.username} (role: {u.role})")
+
+# ======================
 # Blueprints
 # ======================
 from routes.auth import auth_bp
