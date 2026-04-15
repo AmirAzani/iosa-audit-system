@@ -374,6 +374,24 @@
                 </div>
             </div>
 
+            <!-- FINDING DETAILS SECTION (ADDED) -->
+            <div class="section">
+                <div class="section-title">
+                    <i class="fas fa-file-alt"></i>
+                    <h3>Finding Details</h3>
+                </div>
+                <div class="section-content">
+                    {% if finding.finding_details %}
+                        <p>{{ finding.finding_details }}</p>
+                    {% else %}
+                        <div class="empty-content">
+                            <i class="fas fa-info-circle"></i>
+                            Finding details not provided
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
             <!-- Root Cause Section -->
             <div class="section">
                 <div class="section-title">
