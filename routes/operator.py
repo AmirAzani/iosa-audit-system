@@ -156,7 +156,6 @@ def dashboard():
 # JSON data to the dashboard
 # ===============================
 
-
 @operator_bp.route("/api/dashboard-data")
 @login_required
 def api_dashboard_data():
@@ -175,11 +174,17 @@ def api_dashboard_data():
     # Yearly stats
     year_stats_dict = defaultdict(lambda: {'findings': 0, 'observations': 0, 'operators': set()})
     
-    # ISARP stats
+    # ISARP stats - COMPLETE LIST OF 8 DISCIPLINES
     isarp_stats_dict = defaultdict(int)
     isarp_categories = {
-        'ORG': 'Organization', 'MNT': 'Maintenance', 'FLT': 'Flight Ops',
-        'CAB': 'Cabin', 'GRH': 'Ground Handling', 'SEC': 'Security'
+        'ORG': 'Organization (Corporate Organization & Management System)',
+        'FLT': 'Flight Operations',
+        'DSP': 'Operational Control & Flight Dispatch',
+        'MNT': 'Aircraft Engineering & Maintenance',
+        'CAB': 'Cabin Operations',
+        'GRH': 'Ground Handling Operations',
+        'CGO': 'Cargo Operations',
+        'SEC': 'Security Management'
     }
     
     for operator in operators:
@@ -203,12 +208,12 @@ def api_dashboard_data():
                     if year:
                         year_stats_dict[year]['observations'] += 1
                 
-                # ISARP analysis
+                # ISARP analysis - extract first 3 characters of ISARP code
                 code = (finding.isarp_code or '')[:3].upper()
                 if code in isarp_categories:
                     isarp_stats_dict[f"{code} - {isarp_categories[code]}"] += 1
                 else:
-                    isarp_stats_dict['Other'] += 1
+                    isarp_stats_dict['Other - Other ISARP Category'] += 1
         
         operator_stats.append({
             'id': operator.id,
@@ -241,7 +246,7 @@ def api_dashboard_data():
                 'operator_count': len(year_stats_dict[year]['operators'])
             })
     
-    # ISARP stats
+    # ISARP stats - sort by count (highest first)
     isarp_stats = []
     for cat, count in sorted(isarp_stats_dict.items(), key=lambda x: x[1], reverse=True):
         isarp_stats.append({
