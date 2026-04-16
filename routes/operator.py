@@ -42,6 +42,8 @@ def operator_detail(id):
 @login_required
 def dashboard():
     from models import Operator, Finding, Audit
+    from collections import defaultdict
+    from datetime import datetime
     
     # Get all operators
     operators = Operator.query.all()
@@ -50,20 +52,58 @@ def dashboard():
     total_findings = 0
     total_observations = 0
     
+    # Yearly stats
+    year_stats_dict = defaultdict(lambda: {'findings': 0, 'observations': 0, 'operators': set()})
+    
+    # ISARP stats (extract prefix from ISARP code)
+    isarp_stats_dict = defaultdict(int)
+    
+    # ISARP category mapping
+    isarp_categories = {
+        'ORG': 'Organization',
+        'MNT': 'Maintenance',
+        'FLT': 'Flight Operations',
+        'CAB': 'Cabin',
+        'GRH': 'Ground Handling',
+        'SEC': 'Security',
+        'DGR': 'Dangerous Goods',
+        'CGO': 'Cargo',
+        'DSP': 'Dispatch',
+        'OTHER': 'Other'
+    }
+    
     for operator in operators:
         findings_count = 0
         observations_count = 0
         
-        # Loop through all audits for this operator
         for audit in operator.audits:
+            # Extract year from audit_date
+            if audit.audit_date:
+                year = audit.audit_date.year
+                year_stats_dict[year]['operators'].add(operator.id)
+            else:
+                year = None
+            
             for finding in audit.findings:
                 if finding.type == 'Finding':
                     findings_count += 1
+                    total_findings += 1
+                    year_stats_dict[year]['findings'] += 1
                 elif finding.type == 'Observation':
                     observations_count += 1
-        
-        total_findings += findings_count
-        total_observations += observations_count
+                    total_observations += 1
+                    year_stats_dict[year]['observations'] += 1
+                
+                # ISARP analysis - extract prefix (first 3 characters)
+                isarp_code = finding.isarp_code or ''
+                if len(isarp_code) >= 3:
+                    prefix = isarp_code[:3].upper()
+                    if prefix in isarp_categories:
+                        isarp_stats_dict[prefix] += 1
+                    else:
+                        isarp_stats_dict['OTHER'] += 1
+                else:
+                    isarp_stats_dict['OTHER'] += 1
         
         operator_stats.append({
             'id': operator.id,
@@ -74,14 +114,43 @@ def dashboard():
             'observations_count': observations_count
         })
     
-    # Sort by total findings + observations (highest first)
+    # Sort operator_stats by total
     operator_stats.sort(key=lambda x: x['findings_count'] + x['observations_count'], reverse=True)
+    
+    # Prepare year_stats list sorted by year
+    year_stats = []
+    for year in sorted(year_stats_dict.keys()):
+        if year:  # Skip None
+            year_stats.append({
+                'year': year,
+                'findings': year_stats_dict[year]['findings'],
+                'observations': year_stats_dict[year]['observations'],
+                'operator_count': len(year_stats_dict[year]['operators'])
+            })
+    
+    # Prepare ISARP stats list
+    isarp_stats = []
+    total_isarp = sum(isarp_stats_dict.values())
+    for prefix, count in sorted(isarp_stats_dict.items(), key=lambda x: x[1], reverse=True):
+        isarp_stats.append({
+            'category': f"{prefix} - {isarp_categories.get(prefix, 'Other')}",
+            'description': isarp_categories.get(prefix, 'Other ISARP categories'),
+            'count': count,
+            'percentage': (count / total_isarp * 100) if total_isarp > 0 else 0
+        })
+    
+    # Get top ISARP category
+    top_isarp_category = isarp_stats[0]['category'] if isarp_stats else 'N/A'
     
     return render_template('dashboard.html',
                          operators=operators,
                          operator_stats=operator_stats,
                          total_findings=total_findings,
-                         total_observations=total_observations)
+                         total_observations=total_observations,
+                         year_stats=year_stats,
+                         isarp_stats=isarp_stats,
+                         top_isarp_category=top_isarp_category)
+
 # ================================
 # ADD OPERATOR (CREATE)
 # ================================
