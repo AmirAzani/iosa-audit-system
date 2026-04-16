@@ -177,14 +177,14 @@ def api_dashboard_data():
     # ISARP stats - COMPLETE LIST OF 8 DISCIPLINES
     isarp_stats_dict = defaultdict(int)
     isarp_categories = {
-        'ORG': 'Organization (Corporate Organization & Management System)',
-        'FLT': 'Flight Operations',
-        'DSP': 'Operational Control & Flight Dispatch',
-        'MNT': 'Aircraft Engineering & Maintenance',
-        'CAB': 'Cabin Operations',
-        'GRH': 'Ground Handling Operations',
-        'CGO': 'Cargo Operations',
-        'SEC': 'Security Management'
+        'ORG': 'Organization',
+        'FLT': 'Flight Ops',
+        'DSP': 'Dispatch',
+        'MNT': 'Maintenance',
+        'CAB': 'Cabin',
+        'GRH': 'Ground Handling',
+        'CGO': 'Cargo',
+        'SEC': 'Security'
     }
     
     for operator in operators:
