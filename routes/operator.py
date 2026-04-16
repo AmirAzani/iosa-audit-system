@@ -151,6 +151,119 @@ def dashboard():
                          isarp_stats=isarp_stats,
                          top_isarp_category=top_isarp_category)
 
+
+# ===============================
+# JSON data to the dashboard
+# ===============================
+
+
+@operator_bp.route("/api/dashboard-data")
+@login_required
+def api_dashboard_data():
+    from models import Operator, Finding, Audit
+    from collections import defaultdict
+    
+    operators = Operator.query.all()
+    
+    operator_stats = []
+    operator_names = []
+    findings_data = []
+    observations_data = []
+    total_findings = 0
+    total_observations = 0
+    
+    # Yearly stats
+    year_stats_dict = defaultdict(lambda: {'findings': 0, 'observations': 0, 'operators': set()})
+    
+    # ISARP stats
+    isarp_stats_dict = defaultdict(int)
+    isarp_categories = {
+        'ORG': 'Organization', 'MNT': 'Maintenance', 'FLT': 'Flight Ops',
+        'CAB': 'Cabin', 'GRH': 'Ground Handling', 'SEC': 'Security'
+    }
+    
+    for operator in operators:
+        f_count = 0
+        o_count = 0
+        
+        for audit in operator.audits:
+            year = audit.audit_date.year if audit.audit_date else None
+            if year:
+                year_stats_dict[year]['operators'].add(operator.id)
+            
+            for finding in audit.findings:
+                if finding.type == 'Finding':
+                    f_count += 1
+                    total_findings += 1
+                    if year:
+                        year_stats_dict[year]['findings'] += 1
+                else:
+                    o_count += 1
+                    total_observations += 1
+                    if year:
+                        year_stats_dict[year]['observations'] += 1
+                
+                # ISARP analysis
+                code = (finding.isarp_code or '')[:3].upper()
+                if code in isarp_categories:
+                    isarp_stats_dict[f"{code} - {isarp_categories[code]}"] += 1
+                else:
+                    isarp_stats_dict['Other'] += 1
+        
+        operator_stats.append({
+            'id': operator.id,
+            'airline_name': operator.airline_name,
+            'iata_code': operator.iata_code,
+            'findings_count': f_count,
+            'observations_count': o_count
+        })
+        operator_names.append(operator.airline_name)
+        findings_data.append(f_count)
+        observations_data.append(o_count)
+    
+    # Sort operator_stats
+    operator_stats.sort(key=lambda x: x['findings_count'] + x['observations_count'], reverse=True)
+    
+    # Year stats
+    year_stats = []
+    years = []
+    year_findings = []
+    year_observations = []
+    for year in sorted(year_stats_dict.keys()):
+        if year:
+            years.append(year)
+            year_findings.append(year_stats_dict[year]['findings'])
+            year_observations.append(year_stats_dict[year]['observations'])
+            year_stats.append({
+                'year': year,
+                'findings': year_stats_dict[year]['findings'],
+                'observations': year_stats_dict[year]['observations'],
+                'operator_count': len(year_stats_dict[year]['operators'])
+            })
+    
+    # ISARP stats
+    isarp_stats = []
+    for cat, count in sorted(isarp_stats_dict.items(), key=lambda x: x[1], reverse=True):
+        isarp_stats.append({
+            'category': cat,
+            'count': count,
+            'percentage': (count / total_findings * 100) if total_findings > 0 else 0
+        })
+    
+    return {
+        'operatorStats': operator_stats,
+        'operatorNames': operator_names,
+        'findingsData': findings_data,
+        'observationsData': observations_data,
+        'totalFindings': total_findings,
+        'totalObservations': total_observations,
+        'yearStats': year_stats,
+        'years': years,
+        'yearFindings': year_findings,
+        'yearObservations': year_observations,
+        'isarpStats': isarp_stats
+    }
+
 # ================================
 # ADD OPERATOR (CREATE)
 # ================================
