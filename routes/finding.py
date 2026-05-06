@@ -113,6 +113,7 @@ def edit_finding(finding_id):
     finding = Finding.query.get_or_404(finding_id)
 
     if request.method == "POST":
+        finding.type = request.form.get("type")              # ← ADD THIS LINE
         finding.root_cause = request.form.get("root_cause")
         finding.corrective_action = request.form.get("corrective_action")
         finding.final_review = request.form.get("final_review")
@@ -124,8 +125,7 @@ def edit_finding(finding_id):
         return redirect(url_for("finding.view_finding", finding_id=finding.id))
 
     return render_template("edit_finding.html", finding=finding)
-
-
+    
 # ===============================
 # EXPORT FINDINGS TO EXCEL
 # ===============================

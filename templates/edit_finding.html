@@ -67,7 +67,7 @@
         }
 
         .info-item {
-            margin-bottom: 10px;
+            margin-bottom: 15px;
         }
 
         .info-label {
@@ -78,6 +78,7 @@
             display: flex;
             align-items: center;
             gap: 5px;
+            margin-bottom: 5px;
         }
 
         .info-label i {
@@ -98,6 +99,21 @@
             border-radius: 30px;
             font-weight: 600;
             display: inline-block;
+        }
+
+        select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            background: white;
+            cursor: pointer;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #667eea;
         }
 
         /* Form Styles */
@@ -270,16 +286,21 @@
                         <span class="isarp-badge">{{ finding.isarp_code }}</span>
                     </div>
                 </div>
+                
+                <!-- EDITED: Type is now an editable dropdown -->
                 <div class="info-item">
                     <div class="info-label">
                         <i class="fas fa-tag"></i> Type
                     </div>
                     <div class="info-value">
-                        {% if finding.type|lower == 'finding' %}
-                            Finding
-                        {% else %}
-                            Observation
-                        {% endif %}
+                        <select name="type" style="width: 100%; padding: 10px 12px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                            <option value="Finding" {% if finding.type == 'Finding' %}selected{% endif %}>
+                                🔴 Finding
+                            </option>
+                            <option value="Observation" {% if finding.type == 'Observation' %}selected{% endif %}>
+                                🟡 Observation
+                            </option>
+                        </select>
                     </div>
                 </div>
             </div>
