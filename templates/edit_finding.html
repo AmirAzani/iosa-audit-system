@@ -276,36 +276,37 @@
         </div>
 
         <div class="content">
-            <!-- Information Card -->
-            <div class="info-card">
-                <div class="info-item">
-                    <div class="info-label">
-                        <i class="fas fa-code"></i> ISARP Code
-                    </div>
-                    <div class="info-value">
-                        <span class="isarp-badge">{{ finding.isarp_code }}</span>
-                    </div>
-                </div>
-                
-                <!-- EDITED: Type is now an editable dropdown -->
-                <div class="info-item">
-                    <div class="info-label">
-                        <i class="fas fa-tag"></i> Type
-                    </div>
-                    <div class="info-value">
-                        <select name="type" style="width: 100%; padding: 10px 12px; border: 2px solid #e0e0e0; border-radius: 8px;">
-                            <option value="Finding" {% if finding.type == 'Finding' %}selected{% endif %}>
-                                🔴 Finding
-                            </option>
-                            <option value="Observation" {% if finding.type == 'Observation' %}selected{% endif %}>
-                                🟡 Observation
-                            </option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-
+            <!-- ⚠️ IMPORTANT: The FORM now wraps EVERYTHING (including the Type dropdown) -->
             <form method="POST">
+                <!-- Information Card (NOW INSIDE THE FORM) -->
+                <div class="info-card">
+                    <div class="info-item">
+                        <div class="info-label">
+                            <i class="fas fa-code"></i> ISARP Code
+                        </div>
+                        <div class="info-value">
+                            <span class="isarp-badge">{{ finding.isarp_code }}</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Type dropdown - NOW INSIDE THE FORM ✅ -->
+                    <div class="info-item">
+                        <div class="info-label">
+                            <i class="fas fa-tag"></i> Type
+                        </div>
+                        <div class="info-value">
+                            <select name="type" style="width: 100%; padding: 10px 12px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                                <option value="Finding" {% if finding.type == 'Finding' %}selected{% endif %}>
+                                    🔴 Finding
+                                </option>
+                                <option value="Observation" {% if finding.type == 'Observation' %}selected{% endif %}>
+                                    🟡 Observation
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Root Cause -->
                 <div class="form-group">
                     <label>
