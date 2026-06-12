@@ -27,13 +27,29 @@ def operator_detail(id):
     from models import Audit
 
     audits = Audit.query.filter_by(operator_id=id).all()
+    
+    # Get yearly findings count for this operator
+    yearly_findings = {}
+    for audit in audits:
+        if audit.audit_date:
+            year = audit.audit_date.year
+            findings_count = Finding.query.filter_by(audit_id=audit.id, type='Finding').count()
+            if year in yearly_findings:
+                yearly_findings[year] += findings_count
+            else:
+                yearly_findings[year] = findings_count
+
+    # Prepare chart data (sorted by year)
+    years = sorted(yearly_findings.keys())
+    findings_counts = [yearly_findings[year] for year in years]
 
     return render_template(
         "operator_details.html",
         operator=operator,
-        audits=audits
+        audits=audits,
+        years=years,
+        findings_counts=findings_counts
     )
-
 
 # ===============================
 # DASHBOARD ROUTE
